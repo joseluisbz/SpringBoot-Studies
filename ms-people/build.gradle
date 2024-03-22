@@ -29,7 +29,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	runtimeOnly group: 'com.h2database', name: 'h2', version: '2.2.224'
+	implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
 
 	//Util
 	implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
