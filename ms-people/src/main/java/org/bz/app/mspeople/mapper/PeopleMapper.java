@@ -12,20 +12,20 @@ import org.mapstruct.Named;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-@Mapper(componentModel = "spring")
+//@Mapper(componentModel = "spring")
 public interface PeopleMapper {
 
 
-    @Mapping(source = "phones", target = "phones", qualifiedByName = "phoneDTOToEntity")
+    //@Mapping(source = "phones", target = "phones", qualifiedByName = "phoneDTOToEntity")
     User userDTOToEntity(UserDTO userDTO);
 
-    @Named("phoneDTOToEntity")
-    @Mapping(target = "user.phones", ignore = true)
+    //@Named("phoneDTOToEntity")
+    //@Mapping(target = "user", ignore = true)
     Phone phoneDTOToEntity(PhoneDTO phoneDTO);
 
     UserDTO userEntityToDTO(User user);
 
-    @BeforeMapping
+    //@BeforeMapping
     default <T> List<T> castIterableToList(Iterable<T> iterable) {
         return StreamSupport
                 .stream(iterable.spliterator(), false)

@@ -9,10 +9,10 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class DataSourceConfig {
 
-    @Bean
+    //@Bean
     public DataSource dataSource() {
         //jdbc:hsqldb:mem:testdb
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();

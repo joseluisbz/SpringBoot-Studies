@@ -24,12 +24,16 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '3.2.3'
+
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
+	//implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
+	runtimeOnly group: 'com.h2database', name: 'h2', version: '2.2.224'
 
 	//Util
 	implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'

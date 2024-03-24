@@ -1,9 +1,8 @@
 package org.bz.app.mspeople.controllers;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bz.app.mspeople.dtos.UserDTO;
+import org.bz.app.mspeople.entities.User;
 import org.bz.app.mspeople.exceptions.DefaultException;
 import org.bz.app.mspeople.exceptions.ExistingMailException;
 import org.bz.app.mspeople.exceptions.PatternEmailException;
@@ -34,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> view(@PathVariable("id") Long id) {
-        Optional<UserDTO> optionalStoredUser = userService.findById(id);
-        if (optionalStoredUser.isEmpty()) {
+    public ResponseEntity<?> view(@PathVariable Long id) {
+        Optional<User> optionalStoredUser = userService.findById(id);
+        if (!optionalStoredUser.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(optionalStoredUser.get());
@@ -44,52 +43,52 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestHeader(value = "Authorization") String token,
-                                    @Valid @RequestBody UserDTO userDTO, BindingResult result) {
+                                    @Valid @RequestBody User user, BindingResult result) {
 
-        userPasswordValidator.validate(userDTO, result);
+        userPasswordValidator.validate(user, result);
         throwExceptionIfErrors(result);
 
-        Optional<UserDTO> optionalStoredUser = userService.findByEmail(userDTO.getEmail());
+        Optional<User> optionalStoredUser = userService.findByEmail(user.getEmail());
         if (optionalStoredUser.isPresent()) {
-            throw new ExistingMailException(userDTO.getEmail());
+            throw new ExistingMailException(user.getEmail());
         }
 
-        userDTO.setIsactive(true);
-        userDTO.setToken(token);
+        user.setIsactive(true);
+        user.setToken(token);
 
-        UserDTO createdUser = userService.save(userDTO);
+        User createdUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
-                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable Long id) {
+                                  @Valid @RequestBody User user, BindingResult result, @PathVariable Long id) {
 
-        userPasswordValidator.validate(userDTO, result);
+        userPasswordValidator.validate(user, result);
         throwExceptionIfErrors(result);
 
-        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
-            boolean emailUsed = !userService.findByEmailAndIdNot(userDTO.getEmail(), id).isEmpty();
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+            boolean emailUsed = !userService.findByEmailAndIdNot(user.getEmail(), id).isEmpty();
             if (emailUsed) {
-                throw new ExistingMailException(userDTO.getEmail());
+                throw new ExistingMailException(user.getEmail());
             }
         }
 
-        Optional<UserDTO> optionalStoredUser = userService.findById(id);
+        Optional<User> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        UserDTO editedUser = optionalStoredUser.get();
-        editedUser.setName(userDTO.getName());
-        editedUser.setEmail(userDTO.getEmail());
-        editedUser.setPassword(userDTO.getPassword());
-        editedUser.setPhones(userDTO.getPhones());
+        User editedUser = optionalStoredUser.get();
+        editedUser.setName(user.getName());
+        editedUser.setEmail(user.getEmail());
+        editedUser.setPassword(user.getPassword());
+        editedUser.setPhones(user.getPhones());
         editedUser.setModified(new Date());
-        editedUser.setIsactive(userDTO.isIsactive());
+        editedUser.setIsactive(user.isIsactive());
         editedUser.setToken(token);
         try {
-            UserDTO updatedUser = userService.save(editedUser);
+            User updatedUser = userService.save(editedUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
         } catch (Exception exp) {
             throw new DefaultException(exp.getLocalizedMessage());
