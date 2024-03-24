@@ -35,6 +35,7 @@ public class User implements Serializable {
     private String password;
 
     @JsonManagedReference
+    @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Phone> phones;
 
