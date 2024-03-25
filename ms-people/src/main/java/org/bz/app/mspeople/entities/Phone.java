@@ -31,7 +31,6 @@ public class Phone implements Serializable {
     private Integer countryCode;
 
     @JsonBackReference
-    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
