@@ -16,8 +16,8 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class User implements Serializable {
+@Table(name = "USER_ENTITIES")
+public class UserEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 264879308518981680L;
@@ -34,8 +34,8 @@ public class User implements Serializable {
 
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-    private Set<Phone> phones;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userEntity", orphanRemoval = true)
+    private Set<PhoneEntity> phoneEntities;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
@@ -57,8 +57,8 @@ public class User implements Serializable {
         this.lastLogin = new Date();
     }
 
-    public User() {
-        this.phones = new HashSet<>();
+    public UserEntity() {
+        this.phoneEntities = new HashSet<>();
     }
 
     public UUID getId() {
@@ -93,12 +93,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Set<Phone> getPhones() {
-        return phones;
+    public Set<PhoneEntity> getPhoneEntities() {
+        return phoneEntities;
     }
 
-    public void setPhones(Set<Phone> phones) {
-        this.phones = phones;
+    public void setPhoneEntities(Set<PhoneEntity> phoneEntities) {
+        this.phoneEntities = phoneEntities;
     }
 
     public Date getCreated() {

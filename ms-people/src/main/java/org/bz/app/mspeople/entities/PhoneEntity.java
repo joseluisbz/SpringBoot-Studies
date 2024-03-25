@@ -13,8 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "phones", uniqueConstraints = {@UniqueConstraint(columnNames = {"country_code", "city_code", "number"})})
-public class Phone implements Serializable {
+@Table(name = "PHONE_ENTITIES", uniqueConstraints = {@UniqueConstraint(columnNames = {"country_code", "city_code", "number"})})
+public class PhoneEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -24320417052770760L;
@@ -34,7 +34,7 @@ public class Phone implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     public UUID getId() {
         return id;
@@ -68,11 +68,11 @@ public class Phone implements Serializable {
         this.countryCode = countryCode;
     }
 
-    public User getUser() {
-        return user;
+    public UserEntity getUserEntity() {
+        return userEntity;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
     }
 }

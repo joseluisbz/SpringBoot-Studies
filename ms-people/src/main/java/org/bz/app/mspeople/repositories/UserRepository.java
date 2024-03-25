@@ -1,6 +1,6 @@
 package org.bz.app.mspeople.repositories;
 
-import org.bz.app.mspeople.entities.User;
+import org.bz.app.mspeople.entities.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, UUID> {
-    Optional<User> findFirstByEmailIgnoreCase(String email);
+public interface UserRepository extends CrudRepository<UserEntity, UUID> {
+    Optional<UserEntity> findFirstByEmailIgnoreCase(String email);
 
-    List<User> findByEmailIgnoreCaseAndIdNot(String email, UUID id);
+    List<UserEntity> findByEmailIgnoreCaseAndIdNot(String email, UUID id);
 }
