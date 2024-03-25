@@ -59,17 +59,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserDTO> findByEmail(String email) {
-        if (userRepository.findFirstByEmail(email.toLowerCase()).isPresent()) {
-            User user = userRepository.findFirstByEmail(email.toLowerCase()).get();
+    public Optional<UserDTO> findFirstByEmailIgnoreCase(String email) {
+        if (userRepository.findFirstByEmailIgnoreCase(email).isPresent()) {
+            User user = userRepository.findFirstByEmailIgnoreCase(email).get();
             return Optional.of(peopleMapper.userEntityToDTO(user));
         }
         return Optional.empty();
     }
 
     @Override
-    public List<UserDTO> findByEmailAndIdNot(String email, UUID id) {
-        List<User> listUser = userRepository.findByEmailAndIdNot(email.toLowerCase(), id);
+    public List<UserDTO> findByEmailIgnoreCaseAndIdNot(String email, UUID id) {
+        List<User> listUser = userRepository.findByEmailIgnoreCaseAndIdNot(email, id);
         return peopleMapper.userEntityToDTO(listUser);
     }
 
@@ -77,8 +77,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO save(UserDTO userDTO) {
         User user = peopleMapper.userDTOToEntity(userDTO);
-        user.setEmail(user.getEmail().toLowerCase());
-
         User savedUser = userRepository.save(user);
 
         UserDTO savedUserDTO = peopleMapper.userEntityToDTO(savedUser);

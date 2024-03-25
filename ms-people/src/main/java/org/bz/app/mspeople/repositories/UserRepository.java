@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
-    Optional<User> findFirstByEmail(String email);
+    Optional<User> findFirstByEmailIgnoreCase(String email);
 
-    List<User> findByEmailAndIdNot(String email, UUID id);
+    List<User> findByEmailIgnoreCaseAndIdNot(String email, UUID id);
 }

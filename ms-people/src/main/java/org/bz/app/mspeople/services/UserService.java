@@ -13,9 +13,9 @@ public interface UserService {
 
     Optional<UserDTO> findById(UUID id);
 
-    Optional<UserDTO> findByEmail(String email);
+    Optional<UserDTO> findFirstByEmailIgnoreCase(String email);
 
-    List<UserDTO> findByEmailAndIdNot(String email, UUID id);
+    List<UserDTO> findByEmailIgnoreCaseAndIdNot(String email, UUID id);
 
     UserDTO save(UserDTO userDTO);
 

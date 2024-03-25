@@ -50,7 +50,7 @@ public class UserController {
         userPasswordValidator.validate(userDTO, result);
         throwExceptionIfErrors(result);
 
-        Optional<UserDTO> optionalStoredUser = userService.findByEmail(userDTO.getEmail());
+        Optional<UserDTO> optionalStoredUser = userService.findFirstByEmailIgnoreCase(userDTO.getEmail());
         if (optionalStoredUser.isPresent()) {
             throw new ExistingMailException(userDTO.getEmail());
         }
@@ -70,7 +70,7 @@ public class UserController {
         throwExceptionIfErrors(result);
 
         if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
-            boolean emailUsed = !userService.findByEmailAndIdNot(userDTO.getEmail(), id).isEmpty();
+            boolean emailUsed = !userService.findByEmailIgnoreCaseAndIdNot(userDTO.getEmail(), id).isEmpty();
             if (emailUsed) {
                 throw new ExistingMailException(userDTO.getEmail());
             }
