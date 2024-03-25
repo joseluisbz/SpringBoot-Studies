@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "phones")
+@Table(name = "phones", uniqueConstraints = { @UniqueConstraint(columnNames = { "country_code", "city_code", "number" }) })
 public class Phone implements Serializable {
 
     @Serial
@@ -21,6 +21,7 @@ public class Phone implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
     private Long number;
