@@ -1,11 +1,9 @@
 package org.bz.app.mspeople.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -34,8 +32,10 @@ public class User implements Serializable {
 
     private String password;
 
-    @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    //https://stackoverflow.com/questions/65203543/spring-data-jpa-how-to-persist-nested-object-any-existing-or-not
+    @OneToMany(cascade = CascadeType.MERGE,
+            //orphanRemoval = true,
+            fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Phone> phones;
 
     @Temporal(TemporalType.TIMESTAMP)
