@@ -4,7 +4,6 @@ import org.bz.app.mspeople.dtos.PhoneDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 import org.bz.app.mspeople.entities.Phone;
 import org.bz.app.mspeople.entities.User;
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,12 +19,22 @@ public interface PeopleMapper {
     User userDTOToEntity(UserDTO userDTO);
 
     @Named("phoneDTOToEntity")
-    @Mapping(target = "user.phones", ignore = true)
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "cityCode", target = "cityCode")
+    @Mapping(source = "countryCode", target = "countryCode")
+    @Mapping(target = "user", ignore = true)
     Phone phoneDTOToEntity(PhoneDTO phoneDTO);
 
+    @Mapping(source = "phones", target = "phones", qualifiedByName = "phoneEntityToDTO")
     UserDTO userEntityToDTO(User user);
 
-    @BeforeMapping
+    @Named("phoneEntityToDTO")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "cityCode", target = "cityCode")
+    @Mapping(source = "countryCode", target = "countryCode")
+    @Mapping(target = "user", ignore = true)
+    PhoneDTO phoneEntityToDTO(Phone phone);
+
     default <T> List<T> castIterableToList(Iterable<T> iterable) {
         return StreamSupport
                 .stream(iterable.spliterator(), false)

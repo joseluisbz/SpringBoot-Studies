@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -77,26 +76,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO save(UserDTO userDTO) {
         User user = peopleMapper.userDTOToEntity(userDTO);
-        if (user.getId() != null) {
-            //phoneDao.deleteByUser_Id(user.getId());
-            Set<Phone> listOldPhones = phoneRepository.findByUser_Id(user.getId());
-            Set<Phone> listNewPhones = user.getPhones();
-            if (listNewPhones != null && listOldPhones != null) {
-                Set<Long> listOldIds = listOldPhones.stream().map(Phone::getId).collect(Collectors.toSet());
-                Set<Long> listNewIds = listNewPhones.stream().map(Phone::getId).collect(Collectors.toSet());
-                listOldIds.stream().filter(id -> !listNewIds.contains(id)).forEach(phoneRepository::deleteById);
-            }
-        }
+        user.getPhones().forEach(phone -> phone.setUser(user));
         user.setEmail(user.getEmail().toLowerCase());
-        userRepository.save(user);
-        log.info("user: " + user);
-        user.getPhones().forEach(p -> {
-            log.info("user.getId(): " + user.getId() + ", p.getId(): " + p.getId());
-            //p.getUser().setId(user.getId());
-            //p.setUser(user);
-            //phoneRepository.save(p);
-        });
-        return peopleMapper.userEntityToDTO(user);
+
+        User savedUser = userRepository.save(user);
+
+        UserDTO savedUserDTO = peopleMapper.userEntityToDTO(savedUser);
+        savedUserDTO.getPhones().forEach(phone -> phone.setUser(savedUserDTO));
+        return savedUserDTO;
     }
 
     @Override

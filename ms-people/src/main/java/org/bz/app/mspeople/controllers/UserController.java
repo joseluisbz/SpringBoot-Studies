@@ -63,7 +63,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
-                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable Long id) {
+                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable("id") Long id) {
 
         userPasswordValidator.validate(userDTO, result);
         throwExceptionIfErrors(result);
@@ -97,7 +97,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
