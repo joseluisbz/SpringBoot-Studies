@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class PhoneDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 2826599699776225415L;
 
-    private Long id;
+    private UUID id;
 
     private Long number;
 
@@ -27,11 +28,11 @@ public class PhoneDTO implements Serializable {
     @JsonBackReference
     private UserDTO user;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

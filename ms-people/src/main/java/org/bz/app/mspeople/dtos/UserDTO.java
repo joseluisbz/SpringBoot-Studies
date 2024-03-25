@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -20,7 +21,7 @@ public class UserDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 599213033533076911L;
 
-    private Long id;
+    private UUID id;
 
     private String name;
 
@@ -48,11 +49,11 @@ public class UserDTO implements Serializable {
         this.phones = new HashSet<>();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

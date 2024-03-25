@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> view(@PathVariable("id") Long id) {
+    public ResponseEntity<?> view(@PathVariable("id") UUID id) {
         Optional<UserDTO> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -63,7 +64,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
-                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable("id") Long id) {
+                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable("id") UUID id) {
 
         userPasswordValidator.validate(userDTO, result);
         throwExceptionIfErrors(result);
@@ -97,7 +98,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") UUID id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

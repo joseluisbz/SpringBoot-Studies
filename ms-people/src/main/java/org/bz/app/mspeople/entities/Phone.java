@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -19,8 +20,8 @@ public class Phone implements Serializable {
     private static final long serialVersionUID = -24320417052770760L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private Long number;
 
@@ -34,11 +35,11 @@ public class Phone implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

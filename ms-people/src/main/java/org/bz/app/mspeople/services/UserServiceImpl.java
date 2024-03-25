@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserDTO> findById(Long id) {
+    public Optional<UserDTO> findById(UUID id) {
         if (userRepository.findById(id).isPresent()) {
             User user = userRepository.findById(id).get();
             return Optional.of(peopleMapper.userEntityToDTO(user));
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findByEmailAndIdNot(String email, Long id) {
+    public List<UserDTO> findByEmailAndIdNot(String email, UUID id) {
         List<User> listUser = userRepository.findByEmailAndIdNot(email.toLowerCase(), id);
         return peopleMapper.userEntityToDTO(listUser);
     }
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 }
