@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "phones", uniqueConstraints = { @UniqueConstraint(columnNames = { "country_code", "city_code", "number" }) })
+@Table(name = "phones", uniqueConstraints = {@UniqueConstraint(columnNames = {"country_code", "city_code", "number"})})
 public class Phone implements Serializable {
 
     @Serial
