@@ -2,12 +2,14 @@ package org.bz.app.mspeople.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,8 +33,48 @@ public class Phone implements Serializable {
     private Integer countryCode;
 
     @JsonBackReference
-    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getNumber() {
+        return number;
+    }
+
+    public void setNumber(Long number) {
+        this.number = number;
+    }
+
+    public Integer getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(Integer cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public Integer getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(Integer countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }
