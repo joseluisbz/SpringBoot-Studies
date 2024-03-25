@@ -77,13 +77,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO save(UserDTO userDTO) {
         User user = peopleMapper.userDTOToEntity(userDTO);
-        user.getPhones().forEach(phone -> phone.setUser(user));
         user.setEmail(user.getEmail().toLowerCase());
 
         User savedUser = userRepository.save(user);
 
         UserDTO savedUserDTO = peopleMapper.userEntityToDTO(savedUser);
-        savedUserDTO.getPhones().forEach(phone -> phone.setUser(savedUserDTO));
         return savedUserDTO;
     }
 

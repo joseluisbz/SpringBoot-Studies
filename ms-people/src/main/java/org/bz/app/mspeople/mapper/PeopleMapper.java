@@ -4,19 +4,22 @@ import org.bz.app.mspeople.dtos.PhoneDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 import org.bz.app.mspeople.entities.Phone;
 import org.bz.app.mspeople.entities.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface PeopleMapper {
 
 
     @Mapping(source = "phones", target = "phones", qualifiedByName = "phoneDTOToEntity")
     User userDTOToEntity(UserDTO userDTO);
+
+    @AfterMapping
+    default void afterMappingUserDTOToEntity(@MappingTarget User user) {
+        user.getPhones().forEach(phone -> phone.setUser(user));
+    }
 
     @Named("phoneDTOToEntity")
     @Mapping(source = "id", target = "id")
@@ -27,6 +30,11 @@ public interface PeopleMapper {
 
     @Mapping(source = "phones", target = "phones", qualifiedByName = "phoneEntityToDTO")
     UserDTO userEntityToDTO(User user);
+
+    @AfterMapping
+    default void afterMappingUserEntityToDTO(@MappingTarget UserDTO userDTO) {
+        userDTO.getPhones().forEach(phone -> phone.setUser(userDTO));
+    }
 
     @Named("phoneEntityToDTO")
     @Mapping(source = "id", target = "id")
