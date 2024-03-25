@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
+	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.4'
 }
 
@@ -22,13 +22,13 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.4'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
 
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
 	implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
 
 	//Util
