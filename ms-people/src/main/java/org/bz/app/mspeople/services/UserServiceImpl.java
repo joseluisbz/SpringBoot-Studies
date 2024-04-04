@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
+        userSecurityRepository.deleteById(id);
     }
 
     @Override
@@ -127,13 +128,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number) {
-        Optional<PhoneEntity> optionalPhoneEntity= phoneRepository.findByCountryCodeAndCityCodeAndNumber(countryCode, cityCode, number);
+        Optional<PhoneEntity> optionalPhoneEntity = phoneRepository.findByCountryCodeAndCityCodeAndNumber(countryCode, cityCode, number);
         return optionalPhoneEntityToDTO(optionalPhoneEntity);
     }
 
     @Override
     public Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id) {
-        Optional<PhoneEntity> optionalPhoneEntity= phoneRepository.findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(countryCode, cityCode, number, id);
+        Optional<PhoneEntity> optionalPhoneEntity = phoneRepository.findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(countryCode, cityCode, number, id);
         return optionalPhoneEntityToDTO(optionalPhoneEntity);
     }
 
