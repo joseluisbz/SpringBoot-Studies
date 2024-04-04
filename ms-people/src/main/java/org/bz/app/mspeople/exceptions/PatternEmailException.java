@@ -2,7 +2,7 @@ package org.bz.app.mspeople.exceptions;
 
 import java.io.Serial;
 
-public class PatternEmailException extends RuntimeException {
+public class PatternEmailException extends DefaultException {
 
     @Serial
     private static final long serialVersionUID = -4753386595346116814L;

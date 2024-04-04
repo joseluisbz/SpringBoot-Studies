@@ -2,7 +2,7 @@ package org.bz.app.mspeople.exceptions;
 
 import java.io.Serial;
 
-public class ExistingMailOrUsernameException extends RuntimeException {
+public class ExistingMailOrUsernameException extends DefaultException {
 
     @Serial
     private static final long serialVersionUID = -7241642475224506375L;
