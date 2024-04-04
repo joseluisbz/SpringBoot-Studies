@@ -79,9 +79,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findByEmailIgnoreCaseAndIdNot(String email, UUID id) {
-        List<UserEntity> listUserEntity = userRepository.findByEmailIgnoreCaseAndIdNot(email, id);
-        return peopleMapper.userEntityToDTO(listUserEntity);
+    @Transactional(readOnly = true)
+    public Optional<UserDTO> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findFirstByEmailIgnoreCaseAndIdNot(email, id);
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -120,6 +125,17 @@ public class UserServiceImpl implements UserService {
         if (optionalUserSecurity.isPresent()) {
             UserSecurity userSecurity = optionalUserSecurity.get();
             return Optional.of(peopleMapper.userSecurityToDTO(userSecurity));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id) {
+        Optional<UserEntity> optionalUserEntity = userRepository.findFirstByUsernameIgnoreCaseAndIdNot(username, id);
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
         }
         return Optional.empty();
     }

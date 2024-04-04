@@ -56,32 +56,17 @@ public class UserController {
         throwExceptionIfErrors(result);
 
         Optional<UserDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCase(userDTO.getEmail());
-        UUID uuidUserWithEmail = null;
-        String userEmail = null;
-        if (optionalStoredUserWithEmail.isPresent()) {
-            uuidUserWithEmail = optionalStoredUserWithEmail.get().getId();
-            userEmail = userDTO.getEmail();
-        }
 
         Optional<UserDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCase(userDTO.getUsername());
-        UUID uuidUserWithUsername = null;
-        String userUsername = null;
-        if (optionalStoredUserWithUsername.isPresent()) {
-            uuidUserWithUsername = optionalStoredUserWithUsername.get().getId();
-            userUsername = userDTO.getUsername();
-        }
-        if (uuidUserWithEmail != null || uuidUserWithUsername != null) {
-            boolean uuidAreEquals = false;
-            if (uuidUserWithEmail != null && uuidUserWithUsername != null) {
-                uuidAreEquals = uuidUserWithEmail.toString().equals(uuidUserWithUsername.toString());
-            }
-            throw new ExistingMailOrUsernameException(userEmail, userUsername, uuidAreEquals);
-        }
+
+        throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
             throw new NonexistentRoleException(userDTO.getRole().getName());
         }
+
+        // Validate Phones
 
         userDTO.setIsactive(true);
         userDTO.setToken(token);
@@ -97,17 +82,22 @@ public class UserController {
         userPasswordValidator.validate(userDTO, result);
         throwExceptionIfErrors(result);
 
-        if (userDTO.getEmail() != null && !userDTO.getEmail().isEmpty()) {
-            boolean emailUsed = !userService.findByEmailIgnoreCaseAndIdNot(userDTO.getEmail(), id).isEmpty();
-            if (emailUsed) {
-                throw new ExistingMailOrUsernameException(userDTO.getEmail(), null, false);
-            }
-        }
-
         Optional<UserDTO> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        Optional<UserDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCaseAndIdNot(userDTO.getEmail(), id);
+
+        Optional<UserDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCaseAndIdNot(userDTO.getUsername(), id);
+
+        throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
+
+        Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
+        if (optionalStoredRole.isEmpty()) {
+            throw new NonexistentRoleException(userDTO.getRole().getName());
+        }
+        // Validate Phones
 
         UserDTO editedUser = optionalStoredUser.get();
         editedUser.setName(userDTO.getName());
@@ -158,6 +148,29 @@ public class UserController {
             String defaultMessage = mapErrors.get("role");
             mapErrors.remove("role");
             throw new RoleEmptyException(defaultMessage);
+        }
+    }
+
+    private void throwExceptionIfEmailOrUsernameExists(Optional<UserDTO> optionalStoredUserWithEmail, Optional<UserDTO> optionalStoredUserWithUsername) {
+        UUID uuidUserWithEmail = null;
+        String userEmail = null;
+        if (optionalStoredUserWithEmail.isPresent()) {
+            uuidUserWithEmail = optionalStoredUserWithEmail.get().getId();
+            userEmail = optionalStoredUserWithEmail.get().getEmail();
+        }
+        UUID uuidUserWithUsername = null;
+        String userUsername = null;
+        if (optionalStoredUserWithUsername.isPresent()) {
+            uuidUserWithUsername = optionalStoredUserWithUsername.get().getId();
+            userUsername = optionalStoredUserWithUsername.get().getUsername();
+        }
+
+        if (uuidUserWithEmail != null || uuidUserWithUsername != null) {
+            boolean uuidAreEquals = false;
+            if (uuidUserWithEmail != null && uuidUserWithUsername != null) {
+                uuidAreEquals = uuidUserWithEmail.toString().equals(uuidUserWithUsername.toString());
+            }
+            throw new ExistingMailOrUsernameException(userEmail, userUsername, uuidAreEquals);
         }
     }
 }

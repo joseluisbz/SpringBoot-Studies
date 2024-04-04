@@ -4,7 +4,6 @@ package org.bz.app.mspeople.services;
 import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,14 +15,16 @@ public interface UserService {
 
     Optional<UserDTO> findFirstByEmailIgnoreCase(String email);
 
-    List<UserDTO> findByEmailIgnoreCaseAndIdNot(String email, UUID id);
+    Optional<UserDTO> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id);
 
     UserDTO save(UserDTO userDTO);
 
     void deleteById(UUID id);
 
-    Optional<UserDTO> findFirstByUsernameIgnoreCase(String email);
+    Optional<UserDTO> findFirstByUsernameIgnoreCase(String username);
 
     Optional<RoleDTO> findRoleByNameIgnoreCase(String name);
+
+    Optional<UserDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id);
 
 }
