@@ -3,6 +3,7 @@ package org.bz.app.mspeople.dtos;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
@@ -12,11 +13,13 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class PhoneDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2826599699776225415L;
 
+    @EqualsAndHashCode.Exclude
     private UUID id;
 
     private Long number;
@@ -26,6 +29,7 @@ public class PhoneDTO implements Serializable {
     private Integer countryCode;
 
     @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private UserDTO user;
 
     public UUID getId() {

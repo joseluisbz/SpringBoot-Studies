@@ -3,12 +3,10 @@ package org.bz.app.mspeople.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bz.app.mspeople.dtos.PhoneDTO;
 import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
-import org.bz.app.mspeople.exceptions.DefaultException;
-import org.bz.app.mspeople.exceptions.ExistingMailOrUsernameException;
-import org.bz.app.mspeople.exceptions.PatternEmailException;
-import org.bz.app.mspeople.exceptions.PatternPasswordException;
+import org.bz.app.mspeople.exceptions.*;
 import org.bz.app.mspeople.security.exceptions.NonexistentRoleException;
 import org.bz.app.mspeople.security.exceptions.RoleEmptyException;
 import org.bz.app.mspeople.security.exceptions.UsernameEmptyException;
@@ -61,13 +59,23 @@ public class UserController {
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
+        userDTO.getPhones().forEach(phone -> {
+            Optional<PhoneDTO> optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumber(
+                    phone.getCountryCode(),
+                    phone.getCityCode(),
+                    phone.getNumber());
+            if (optionalPhoneDTO.isPresent()) {
+                PhoneDTO phoneDTO = optionalPhoneDTO.get();
+                throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
+            }
+        });
+
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
             throw new NonexistentRoleException(userDTO.getRole().getName());
         }
 
-        // Validate Phones
-
+        userDTO.setCreated(new Date());
         userDTO.setIsactive(true);
         userDTO.setToken(token);
 
@@ -82,6 +90,10 @@ public class UserController {
         userPasswordValidator.validate(userDTO, result);
         throwExceptionIfErrors(result);
 
+        if (!id.equals(userDTO.getId())) {
+            throw new InconsistentBodyIdException(id, userDTO.getId());
+        }
+
         Optional<UserDTO> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -93,11 +105,22 @@ public class UserController {
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
+        userDTO.getPhones().forEach(phone -> {
+            Optional<PhoneDTO> optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(
+                    phone.getCountryCode(),
+                    phone.getCityCode(),
+                    phone.getNumber(),
+                    userDTO.getId());
+            if (optionalPhoneDTO.isPresent()) {
+                PhoneDTO phoneDTO = optionalPhoneDTO.get();
+                throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
+            }
+        });
+
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
             throw new NonexistentRoleException(userDTO.getRole().getName());
         }
-        // Validate Phones
 
         UserDTO editedUser = optionalStoredUser.get();
         editedUser.setName(userDTO.getName());

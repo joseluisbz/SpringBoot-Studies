@@ -43,8 +43,7 @@ public class UserEntity extends UserAncestry implements Serializable {
 
     @PrePersist
     public void prePersist() {
-        this.created = new Date();
-        this.lastLogin = new Date();
+        this.modified = new Date();
     }
 
     public String getName() {

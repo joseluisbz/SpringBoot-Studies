@@ -2,6 +2,7 @@ package org.bz.app.mspeople.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bz.app.mspeople.dtos.PhoneDTO;
 import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 import org.bz.app.mspeople.entities.PhoneEntity;
@@ -60,33 +61,21 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Optional<UserDTO> findById(UUID id) {
         Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
-        if (optionalUserEntity.isPresent()) {
-            UserEntity userEntity = optionalUserEntity.get();
-            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
-        }
-        return Optional.empty();
+        return optionalUserEntityToDTO(optionalUserEntity);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<UserDTO> findFirstByEmailIgnoreCase(String email) {
         Optional<UserEntity> optionalUserEntity = userRepository.findFirstByEmailIgnoreCase(email);
-        if (optionalUserEntity.isPresent()) {
-            UserEntity userEntity = optionalUserEntity.get();
-            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
-        }
-        return Optional.empty();
+        return optionalUserEntityToDTO(optionalUserEntity);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<UserDTO> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id) {
         Optional<UserEntity> optionalUserEntity = userRepository.findFirstByEmailIgnoreCaseAndIdNot(email, id);
-        if (optionalUserEntity.isPresent()) {
-            UserEntity userEntity = optionalUserEntity.get();
-            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
-        }
-        return Optional.empty();
+        return optionalUserEntityToDTO(optionalUserEntity);
     }
 
     @Override
@@ -133,11 +122,19 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Optional<UserDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id) {
         Optional<UserEntity> optionalUserEntity = userRepository.findFirstByUsernameIgnoreCaseAndIdNot(username, id);
-        if (optionalUserEntity.isPresent()) {
-            UserEntity userEntity = optionalUserEntity.get();
-            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
-        }
-        return Optional.empty();
+        return optionalUserEntityToDTO(optionalUserEntity);
+    }
+
+    @Override
+    public Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number) {
+        Optional<PhoneEntity> optionalPhoneEntity= phoneRepository.findByCountryCodeAndCityCodeAndNumber(countryCode, cityCode, number);
+        return optionalPhoneEntityToDTO(optionalPhoneEntity);
+    }
+
+    @Override
+    public Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id) {
+        Optional<PhoneEntity> optionalPhoneEntity= phoneRepository.findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(countryCode, cityCode, number, id);
+        return optionalPhoneEntityToDTO(optionalPhoneEntity);
     }
 
     @Override
@@ -146,6 +143,23 @@ public class UserServiceImpl implements UserService {
         if (optionalRoleSecurity.isPresent()) {
             RoleSecurity roleSecurity = optionalRoleSecurity.get();
             return Optional.of(peopleMapper.roleSecurityToDTO(roleSecurity));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<UserDTO> optionalUserEntityToDTO(Optional<UserEntity> optionalUserEntity) {
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
+        }
+        return Optional.empty();
+
+    }
+
+    private Optional<PhoneDTO> optionalPhoneEntityToDTO(Optional<PhoneEntity> optionalPhoneEntity) {
+        if (optionalPhoneEntity.isPresent()) {
+            PhoneEntity phoneEntity = optionalPhoneEntity.get();
+            return Optional.of(peopleMapper.phoneEntityToDTO(phoneEntity));
         }
         return Optional.empty();
     }

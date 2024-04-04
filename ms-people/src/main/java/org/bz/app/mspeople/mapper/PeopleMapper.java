@@ -19,7 +19,6 @@ public interface PeopleMapper {
     @Mapping(source = "phones", target = "phoneEntities", qualifiedByName = "phoneDTOToEntity")
     UserEntity userDTOToEntity(UserDTO userDTO);
 
-    //@Mapping(target = "phones", ignore = true)
     UserSecurity userDTOToSecurity(UserDTO userDTO);
 
     RoleSecurity roleDTOToSecurity(RoleDTO roleDTO);

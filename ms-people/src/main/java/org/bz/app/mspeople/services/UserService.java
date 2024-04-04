@@ -1,6 +1,7 @@
 package org.bz.app.mspeople.services;
 
 
+import org.bz.app.mspeople.dtos.PhoneDTO;
 import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 
@@ -26,5 +27,9 @@ public interface UserService {
     Optional<RoleDTO> findRoleByNameIgnoreCase(String name);
 
     Optional<UserDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id);
+
+    Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number);
+
+    Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id);
 
 }
