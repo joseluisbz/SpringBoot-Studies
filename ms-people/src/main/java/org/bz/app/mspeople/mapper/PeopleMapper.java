@@ -10,6 +10,7 @@ import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.mapstruct.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
@@ -61,4 +62,14 @@ public interface PeopleMapper {
     }
 
     List<UserDTO> userEntityToDTO(List<UserEntity> listUserEntity);
+
+    //https://github.com/mapstruct/mapstruct/issues/674
+    default <T> T unwrapOptional(Optional<T> optional) {
+        return optional.orElse(null);
+    }
+
+    //https://techlab.bol.com/en/blog/mapstruct-optional-fields/
+    default <T> Optional<T> wrapOptional(T object) {
+        return Optional.of(object);
+    }
 }
