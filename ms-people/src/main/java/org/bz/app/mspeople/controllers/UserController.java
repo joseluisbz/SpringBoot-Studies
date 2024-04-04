@@ -110,7 +110,7 @@ public class UserController {
                     phone.getCountryCode(),
                     phone.getCityCode(),
                     phone.getNumber(),
-                    userDTO.getId());
+                    id);
             if (optionalPhoneDTO.isPresent()) {
                 PhoneDTO phoneDTO = optionalPhoneDTO.get();
                 throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
@@ -130,6 +130,7 @@ public class UserController {
         editedUser.setModified(new Date());
         editedUser.setIsactive(userDTO.isIsactive());
         editedUser.setToken(token);
+        editedUser.setRole(userDTO.getRole());
         try {
             UserDTO updatedUser = userService.save(editedUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);

@@ -10,9 +10,9 @@ public class InconsistentBodyIdException extends DefaultException {
 
     public InconsistentBodyIdException(UUID pathId, UUID requestBodyId) {
         super("The path Id: '"
-                .concat(pathId.toString())
+                .concat((pathId != null ? pathId.toString() : "null"))
                 .concat("' and the requestBody Id: '")
-                .concat(requestBodyId.toString())
+                .concat((requestBodyId != null ? requestBodyId.toString() : "null"))
                 .concat("' are different")
         );
     }
