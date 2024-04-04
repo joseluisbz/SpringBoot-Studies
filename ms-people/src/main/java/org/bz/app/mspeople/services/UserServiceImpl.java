@@ -97,8 +97,11 @@ public class UserServiceImpl implements UserService {
         log.info("userEntity: " + userEntity);
         log.info("userSecurity: " + userSecurity);
 
+        UUID id = UUID.randomUUID();
+        userEntity.setId(id);
+
         UserEntity savedUserEntity = userRepository.save(userEntity);
-        userSecurity.setId(savedUserEntity.getId());
+        userSecurity.setId(id);
         UserSecurity savedUserSecurity = userSecurityRepository.save(userSecurity);
 
         UserDTO savedUserDTO = peopleMapper.userEntityToDTO(savedUserEntity);

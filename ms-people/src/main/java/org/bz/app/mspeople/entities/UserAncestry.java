@@ -1,6 +1,8 @@
 package org.bz.app.mspeople.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,6 @@ public abstract class UserAncestry implements Serializable {
     private static final long serialVersionUID = -8181593980660790377L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
