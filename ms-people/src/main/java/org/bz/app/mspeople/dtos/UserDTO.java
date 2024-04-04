@@ -22,6 +22,7 @@ public class UserDTO implements Serializable {
     private UUID id;
 
     @NotEmpty
+    @Size(min = 6, max = 16)
     private String password;
 
     @NotEmpty

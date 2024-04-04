@@ -2,8 +2,9 @@ package org.bz.app.mspeople.security.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.bz.app.mspeople.entities.UserEntity;
+import org.bz.app.mspeople.entities.UserAncestry;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,17 +12,15 @@ import java.io.Serial;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "USER_SECURITIES")
-public class UserSecurity extends UserEntity implements UserDetails {
+public class UserSecurity extends UserAncestry implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = -1540315403099766750L;
-
-    @Column(nullable = false, unique = true)
-    private String username;
 
     private boolean accountNonExpired = true;
 
@@ -34,15 +33,6 @@ public class UserSecurity extends UserEntity implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false, referencedColumnName = "id")
     private RoleSecurity role;
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     @Override
     public boolean isAccountNonExpired() {

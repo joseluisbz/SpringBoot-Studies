@@ -23,7 +23,7 @@ public class RoleSecurity implements Serializable {
     @Column(name = "id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 16)
     private String name;
 
     @JsonManagedReference

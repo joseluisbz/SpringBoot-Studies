@@ -1,7 +1,5 @@
 package org.bz.app.mspeople.exceptions;
 
-import org.bz.app.mspeople.security.exceptions.RoleEmptyException;
-import org.bz.app.mspeople.security.exceptions.UsernameEmptyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

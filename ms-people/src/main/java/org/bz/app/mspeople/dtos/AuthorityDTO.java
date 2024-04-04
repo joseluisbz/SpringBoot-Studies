@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -13,6 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorityDTO implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 3555198096660243462L;
 
     private UUID id;
 

@@ -87,12 +87,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserDTO userDTO) {
+
         UserEntity userEntity = peopleMapper.userDTOToEntity(userDTO);
         UserSecurity userSecurity = peopleMapper.userDTOToSecurity(userDTO);
-        userSecurity.setPhoneEntities(null);
 
         Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(userSecurity.getRole().getName());
         userSecurity.setRole(optionalRoleSecurity.get());
+
+        log.info("userEntity: " + userEntity);
+        log.info("userSecurity: " + userSecurity);
+
         UserEntity savedUserEntity = userRepository.save(userEntity);
         userSecurity.setId(savedUserEntity.getId());
         UserSecurity savedUserSecurity = userSecurityRepository.save(userSecurity);

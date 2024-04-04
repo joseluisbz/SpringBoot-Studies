@@ -4,33 +4,22 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "USER_ENTITIES")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class UserEntity implements Serializable {
+public class UserEntity extends UserAncestry implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 264879308518981680L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "uuid", updatable = false)
-    private UUID id;
-
-    private String password;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 
     private String name;
 
@@ -57,35 +46,6 @@ public class UserEntity implements Serializable {
         this.created = new Date();
         this.lastLogin = new Date();
     }
-
-    public UserEntity() {
-        this.phoneEntities = new HashSet<>();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
 
     public String getName() {
         return name;

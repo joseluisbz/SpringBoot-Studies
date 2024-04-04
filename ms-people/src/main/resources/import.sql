@@ -31,3 +31,5 @@ SELECT id FROM ROLE_SECURITIES WHERE name = 'ADMIN';
 --INSERT INTO ROLE_AUTHORITY_MAPPING (authority_id, role_id) VALUES (find_authority_id('READ_ALL'), find_role_id('ADMIN'));
 
 --INSERT INTO ROLE_AUTHORITY_MAPPING (authority_id, role_id) SELECT sa.id AS authority_id, sr.id AS role_id FROM AUTHORITY_SECURITIES sa JOIN ROLE_SECURITIES sr ON sr.name = 'USER' WHERE sa.authority = 'READ_SELF';
+
+SELECT ue.id, us.id FROM USER_ENTITIES ue JOIN USER_SECURITIES us ON us.id = us.id;
