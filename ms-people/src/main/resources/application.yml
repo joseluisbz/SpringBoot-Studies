@@ -13,6 +13,13 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
 
 format:
   password: '[A-Za-z0-9]+'
+
+token:
+  minutes:
+    expiration: 30

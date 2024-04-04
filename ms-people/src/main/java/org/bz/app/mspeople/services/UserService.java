@@ -1,6 +1,7 @@
 package org.bz.app.mspeople.services;
 
 
+import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 
 import java.util.List;
@@ -20,5 +21,9 @@ public interface UserService {
     UserDTO save(UserDTO userDTO);
 
     void deleteById(UUID id);
+
+    Optional<UserDTO> findFirstByUsernameIgnoreCase(String email);
+
+    Optional<RoleDTO> findRoleByNameIgnoreCase(String name);
 
 }

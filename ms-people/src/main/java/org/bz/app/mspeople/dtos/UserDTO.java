@@ -1,9 +1,7 @@
 package org.bz.app.mspeople.dtos;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -23,14 +21,21 @@ public class UserDTO implements Serializable {
 
     private UUID id;
 
-    private String name;
+    @NotEmpty
+    private String password;
 
-    @Pattern(regexp = "[A-Za-z]+@[a-z]+\\.[a-z]+")  // aaaaaaa@dominio.cl (Without Numbers)
+    @NotEmpty
     @Email
+    @Pattern(regexp = "[A-Za-z]+@[a-z]+\\.[a-z]+")  // aaaaaaa@dominio.cl (Without Numbers)
     private String email;
 
     @NotEmpty
-    private String password;
+    @Size(min = 10)
+    @Pattern(regexp = "^[a-zA-Z0-9_-]([a-zA-Z0-9_.\\-]{9,})*$")
+    private String username;
+
+    @NotEmpty
+    private String name;
 
     @JsonManagedReference
     private Set<PhoneDTO> phones;
@@ -45,6 +50,17 @@ public class UserDTO implements Serializable {
 
     private String token;
 
+    private boolean accountNonExpired = true;
+
+    private boolean accountNonLocked = true;
+
+    private boolean credentialsNonExpired = true;
+
+    private boolean enabled = true;
+
+    @NotNull
+    private RoleDTO role;
+
     public UserDTO() {
         this.phones = new HashSet<>();
     }
@@ -57,12 +73,12 @@ public class UserDTO implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -73,12 +89,20 @@ public class UserDTO implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<PhoneDTO> getPhones() {
@@ -127,5 +151,45 @@ public class UserDTO implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
+
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public RoleDTO getRole() {
+        return role;
+    }
+
+    public void setRole(RoleDTO role) {
+        this.role = role;
     }
 }

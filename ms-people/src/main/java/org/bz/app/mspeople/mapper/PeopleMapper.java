@@ -1,9 +1,12 @@
 package org.bz.app.mspeople.mapper;
 
 import org.bz.app.mspeople.dtos.PhoneDTO;
+import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 import org.bz.app.mspeople.entities.PhoneEntity;
 import org.bz.app.mspeople.entities.UserEntity;
+import org.bz.app.mspeople.security.entities.RoleSecurity;
+import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -15,6 +18,11 @@ public interface PeopleMapper {
 
     @Mapping(source = "phones", target = "phoneEntities", qualifiedByName = "phoneDTOToEntity")
     UserEntity userDTOToEntity(UserDTO userDTO);
+
+    //@Mapping(target = "phones", ignore = true)
+    UserSecurity userDTOToSecurity(UserDTO userDTO);
+
+    RoleSecurity roleDTOToSecurity(RoleDTO roleDTO);
 
     @AfterMapping
     default void afterMappingUserDTOToEntity(@MappingTarget UserEntity userEntity) {
@@ -30,6 +38,10 @@ public interface PeopleMapper {
 
     @Mapping(source = "phoneEntities", target = "phones", qualifiedByName = "phoneEntityToDTO")
     UserDTO userEntityToDTO(UserEntity userEntity);
+
+    UserDTO userSecurityToDTO(UserSecurity userSecurity);
+
+    RoleDTO roleSecurityToDTO(RoleSecurity roleSecurity);
 
     @AfterMapping
     default void afterMappingUserEntityToDTO(@MappingTarget UserDTO userDTO) {

@@ -1,5 +1,6 @@
 package org.bz.app.mspeople.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,7 @@ public class PhoneEntity implements Serializable {
     @Column(name = "country_code")
     private Integer countryCode;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;

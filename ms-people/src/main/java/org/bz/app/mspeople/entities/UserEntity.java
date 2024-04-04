@@ -1,9 +1,9 @@
 package org.bz.app.mspeople.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,11 +12,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
 @Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "USER_ENTITIES")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class UserEntity implements Serializable {
 
     @Serial
@@ -27,13 +27,14 @@ public class UserEntity implements Serializable {
     @Column(name = "id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    private String name;
-
-    @Column(unique = true)
-    private String email;
-
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    private String name;
+
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userEntity", orphanRemoval = true)
     private Set<PhoneEntity> phoneEntities;
 
@@ -69,12 +70,12 @@ public class UserEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
@@ -85,12 +86,13 @@ public class UserEntity implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+
+    public String getName() {
+        return name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<PhoneEntity> getPhoneEntities() {

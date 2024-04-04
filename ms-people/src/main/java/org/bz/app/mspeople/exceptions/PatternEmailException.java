@@ -8,7 +8,7 @@ public class PatternEmailException extends RuntimeException {
     private static final long serialVersionUID = -4753386595346116814L;
 
     public PatternEmailException(String message) {
-        super("The Email does not meet the required pattern. "
+        super("The 'email' does not meet the required pattern. "
                 .concat(message));
     }
 

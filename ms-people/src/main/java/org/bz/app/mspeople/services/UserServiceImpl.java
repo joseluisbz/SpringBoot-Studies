@@ -2,12 +2,17 @@ package org.bz.app.mspeople.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserDTO;
 import org.bz.app.mspeople.entities.PhoneEntity;
 import org.bz.app.mspeople.entities.UserEntity;
 import org.bz.app.mspeople.mapper.PeopleMapper;
 import org.bz.app.mspeople.repositories.PhoneRepository;
 import org.bz.app.mspeople.repositories.UserRepository;
+import org.bz.app.mspeople.security.entities.RoleSecurity;
+import org.bz.app.mspeople.security.entities.UserSecurity;
+import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
+import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +33,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final PhoneRepository phoneRepository;
+
+    private final UserSecurityRepository userSecurityRepository;
+
+    private final RoleSecurityRepository roleSecurityRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,8 +59,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserDTO> findById(UUID id) {
-        if (userRepository.findById(id).isPresent()) {
-            UserEntity userEntity = userRepository.findById(id).get();
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
             return Optional.of(peopleMapper.userEntityToDTO(userEntity));
         }
         return Optional.empty();
@@ -60,8 +70,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Optional<UserDTO> findFirstByEmailIgnoreCase(String email) {
-        if (userRepository.findFirstByEmailIgnoreCase(email).isPresent()) {
-            UserEntity userEntity = userRepository.findFirstByEmailIgnoreCase(email).get();
+        Optional<UserEntity> optionalUserEntity = userRepository.findFirstByEmailIgnoreCase(email);
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
             return Optional.of(peopleMapper.userEntityToDTO(userEntity));
         }
         return Optional.empty();
@@ -77,7 +88,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO save(UserDTO userDTO) {
         UserEntity userEntity = peopleMapper.userDTOToEntity(userDTO);
+        UserSecurity userSecurity = peopleMapper.userDTOToSecurity(userDTO);
+        userSecurity.setPhoneEntities(null);
+
+        Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(userSecurity.getRole().getName());
+        userSecurity.setRole(optionalRoleSecurity.get());
         UserEntity savedUserEntity = userRepository.save(userEntity);
+        userSecurity.setId(savedUserEntity.getId());
+        UserSecurity savedUserSecurity = userSecurityRepository.save(userSecurity);
 
         UserDTO savedUserDTO = peopleMapper.userEntityToDTO(savedUserEntity);
         return savedUserDTO;
@@ -87,5 +105,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<UserDTO> findFirstByUsernameIgnoreCase(String username) {
+        Optional<UserSecurity> optionalUserSecurity = userSecurityRepository.findFirstByUsernameIgnoreCase(username);
+        if (optionalUserSecurity.isPresent()) {
+            UserSecurity userSecurity = optionalUserSecurity.get();
+            return Optional.of(peopleMapper.userSecurityToDTO(userSecurity));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<RoleDTO> findRoleByNameIgnoreCase(String name) {
+        Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(name);
+        if (optionalRoleSecurity.isPresent()) {
+            RoleSecurity roleSecurity = optionalRoleSecurity.get();
+            return Optional.of(peopleMapper.roleSecurityToDTO(roleSecurity));
+        }
+        return Optional.empty();
     }
 }

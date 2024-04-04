@@ -8,7 +8,7 @@ public class PatternPasswordException extends RuntimeException {
     private static final long serialVersionUID = -43792510933436020L;
 
     public PatternPasswordException(String message) {
-        super("The password does not meet the required pattern. "
+        super("The 'password' does not meet the required pattern. "
                 .concat(message));
     }
 
