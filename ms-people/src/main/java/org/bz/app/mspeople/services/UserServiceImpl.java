@@ -20,11 +20,7 @@ import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -47,26 +43,48 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<UserResponseDTO> findAll() {
-        Iterable<UserEntity> iterableUser = userRepository.findAll();
-        Stream<UserEntity> streamUser =
-                StreamSupport.stream(iterableUser.spliterator(), false);
+        // Obtain Records Separately
+        Iterable<UserEntity> iterableUserEntity = userRepository.findAll();
+        Iterable<UserSecurity> iterableUserSecurity = userSecurityRepository.findAll();
 
-        streamUser.forEach(u -> {
-            Set<PhoneEntity> setPhoneEntities = phoneRepository.findByUserEntity_Id(u.getId());
-            log.info("setPhones: " + setPhoneEntities);
-            u.setPhoneEntities(setPhoneEntities);
-            log.info("u: " + u);
-        });
+        // Convert them to List
+        List<UserEntity> listUserEntity = StreamSupport
+                .stream(iterableUserEntity.spliterator(), false)
+                .toList();
 
-        List<UserEntity> listUserEntity = peopleMapper.castIterableToList(iterableUser);
-        return peopleMapper.userEntityToDTO(listUserEntity);
+        List<UserSecurity> listUserSecurity = StreamSupport
+                .stream(iterableUserSecurity.spliterator(), false)
+                .toList();
+
+        // Consolidate UUID
+        Set<UUID> setUUID = new HashSet<>();
+        listUserEntity.forEach(ue -> setUUID.add(ue.getId()));
+        listUserSecurity.forEach(ue -> setUUID.add(ue.getId()));
+
+        // Create new List Mixing
+        List<UserResponseDTO> listUserResponseDTO =
+                setUUID.stream().map(uuid -> {
+                    Optional<UserEntity> optionalUserEntity = listUserEntity
+                            .stream()
+                            .filter(ue -> ue.getId().equals(uuid))
+                            .findFirst();
+                    Optional<UserSecurity> optionalUserSecurity = listUserSecurity
+                            .stream()
+                            .filter(ue -> ue.getId().equals(uuid))
+                            .findFirst();
+                    Optional<UserResponseDTO> optionalUserResponseDTO = optionalUserEntityAndSecurityToDTO(optionalUserEntity, optionalUserSecurity);
+                    return optionalUserResponseDTO.orElseGet(UserResponseDTO::new);
+                }).toList();
+
+        return listUserResponseDTO;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<UserResponseDTO> findById(UUID id) {
         Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
-        return optionalUserEntityToDTO(optionalUserEntity);
+        Optional<UserSecurity> optionalUserSecurity = userSecurityRepository.findById(id);
+        return optionalUserEntityAndSecurityToDTO(optionalUserEntity, optionalUserSecurity);
     }
 
     @Override
@@ -170,6 +188,20 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
     }
 
+    private Optional<UserResponseDTO> optionalUserEntityAndSecurityToDTO(Optional<UserEntity> optionalUserEntity, Optional<UserSecurity> optionalUserSecurity) {
+        if (optionalUserEntity.isPresent() && optionalUserSecurity.isPresent()) {
+            return peopleMapper.wrapOptional(
+                    peopleMapper.userEntityAndSecurityToDTO(optionalUserEntity.get(), optionalUserSecurity.get()));
+        }
+        if (optionalUserEntity.isPresent()) {
+            return optionalUserEntityToDTO(optionalUserEntity);
+        }
+        if (optionalUserSecurity.isPresent()) {
+            return peopleMapper.wrapOptional(peopleMapper.userSecurityToDTO(optionalUserSecurity.get()));
+        }
+        return Optional.empty();
+    }
+
     private Optional<UserResponseDTO> optionalUserEntityToDTO(Optional<UserEntity> optionalUserEntity) {
         if (optionalUserEntity.isPresent()) {
             UserEntity userEntity = optionalUserEntity.get();
@@ -178,6 +210,7 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
 
     }
+
 
     private Optional<PhoneResponseDTO> optionalPhoneEntityToDTO(Optional<PhoneEntity> optionalPhoneEntity) {
         if (optionalPhoneEntity.isPresent()) {
