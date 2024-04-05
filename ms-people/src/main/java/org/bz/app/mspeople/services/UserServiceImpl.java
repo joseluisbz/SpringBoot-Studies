@@ -141,6 +141,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<PhoneDTO> findByIdAndUserEntity_Id(UUID id, UUID user_id) {
+        Optional<PhoneEntity> optionalPhoneEntity =
+                (
+                        id != null && user_id != null ?
+                                phoneRepository.findByIdAndUserEntity_Id(id, user_id) :
+                                Optional.empty()
+                );
+        return optionalPhoneEntityToDTO(optionalPhoneEntity);
+    }
+
+    @Override
     public Optional<RoleDTO> findRoleByNameIgnoreCase(String name) {
         Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(name);
         if (optionalRoleSecurity.isPresent()) {

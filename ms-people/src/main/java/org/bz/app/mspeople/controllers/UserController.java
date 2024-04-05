@@ -18,10 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -59,16 +56,7 @@ public class UserController {
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
-        userDTO.getPhones().forEach(phone -> {
-            Optional<PhoneDTO> optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumber(
-                    phone.getCountryCode(),
-                    phone.getCityCode(),
-                    phone.getNumber());
-            if (optionalPhoneDTO.isPresent()) {
-                PhoneDTO phoneDTO = optionalPhoneDTO.get();
-                throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
-            }
-        });
+        throwExceptionIfPhoneIssue(userDTO.getPhones(), null);
 
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
@@ -105,17 +93,7 @@ public class UserController {
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
-        userDTO.getPhones().forEach(phone -> {
-            Optional<PhoneDTO> optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(
-                    phone.getCountryCode(),
-                    phone.getCityCode(),
-                    phone.getNumber(),
-                    id);
-            if (optionalPhoneDTO.isPresent()) {
-                PhoneDTO phoneDTO = optionalPhoneDTO.get();
-                throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
-            }
-        });
+        throwExceptionIfPhoneIssue(userDTO.getPhones(), id);
 
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
@@ -175,6 +153,7 @@ public class UserController {
         }
     }
 
+
     private void throwExceptionIfEmailOrUsernameExists(Optional<UserDTO> optionalStoredUserWithEmail, Optional<UserDTO> optionalStoredUserWithUsername) {
         UUID uuidUserWithEmail = null;
         String userEmail = null;
@@ -196,5 +175,27 @@ public class UserController {
             }
             throw new ExistingMailOrUsernameException(userEmail, userUsername, uuidAreEquals);
         }
+    }
+
+    private void throwExceptionIfPhoneIssue(Set<PhoneDTO> phones, UUID id) {
+        phones.forEach(phone -> {
+            Optional<PhoneDTO> optionalPhoneDTO;
+            if (phone.getId() != null) {
+                optionalPhoneDTO = userService.findByIdAndUserEntity_Id(phone.getId(), id);
+                if (optionalPhoneDTO.isEmpty()) {
+                    throw new NotAssignablePhoneException(phone.getId(), id);
+                }
+            } else {
+                optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumber(
+                        phone.getCountryCode(),
+                        phone.getCityCode(),
+                        phone.getNumber());
+                if (optionalPhoneDTO.isPresent()) {
+                    PhoneDTO phoneDTO = optionalPhoneDTO.get();
+                    throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
+                }
+
+            }
+        });
     }
 }
