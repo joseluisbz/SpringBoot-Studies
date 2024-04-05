@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class PhoneDTO implements Serializable {
+public class PhoneRequestDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2826599699776225415L;
@@ -30,7 +30,7 @@ public class PhoneDTO implements Serializable {
 
     @JsonBackReference
     @EqualsAndHashCode.Exclude
-    private UserDTO user;
+    private UserRequestDTO user;
 
     public UUID getId() {
         return id;
@@ -64,11 +64,11 @@ public class PhoneDTO implements Serializable {
         this.countryCode = countryCode;
     }
 
-    public UserDTO getUser() {
+    public UserRequestDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserRequestDTO user) {
         this.user = user;
     }
 }

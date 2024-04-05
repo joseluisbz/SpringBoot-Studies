@@ -1,6 +1,6 @@
 package org.bz.app.mspeople.validations;
 
-import org.bz.app.mspeople.dtos.UserDTO;
+import org.bz.app.mspeople.dtos.UserRequestDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -14,14 +14,14 @@ public class UserPasswordValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return UserDTO.class.isAssignableFrom(clazz);
+        return UserRequestDTO.class.isAssignableFrom(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        UserDTO userDTO = (UserDTO) target;
-        if (!userDTO.getPassword().matches(regexp)) {
-            errors.rejectValue("password", "badpattern.userDTO.password", "Expected Pattern: ".concat(regexp));
+        UserRequestDTO userRequestDTO = (UserRequestDTO) target;
+        if (!userRequestDTO.getPassword().matches(regexp)) {
+            errors.rejectValue("password", "badpattern.userRequestDTO.password", "Expected Pattern: ".concat(regexp));
         }
     }
 

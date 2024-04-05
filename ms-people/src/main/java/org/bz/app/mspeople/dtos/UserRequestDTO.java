@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
-public class UserDTO implements Serializable {
+public class UserRequestDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 599213033533076911L;
@@ -39,7 +39,7 @@ public class UserDTO implements Serializable {
     private String name;
 
     @JsonManagedReference
-    private Set<PhoneDTO> phones;
+    private Set<PhoneRequestDTO> phones;
 
     private Date created;
 
@@ -62,7 +62,7 @@ public class UserDTO implements Serializable {
     @NotNull
     private RoleDTO role;
 
-    public UserDTO() {
+    public UserRequestDTO() {
         this.phones = new HashSet<>();
     }
 
@@ -106,11 +106,11 @@ public class UserDTO implements Serializable {
         this.name = name;
     }
 
-    public Set<PhoneDTO> getPhones() {
+    public Set<PhoneRequestDTO> getPhones() {
         return phones;
     }
 
-    public void setPhones(Set<PhoneDTO> phones) {
+    public void setPhones(Set<PhoneRequestDTO> phones) {
         this.phones = phones;
     }
 

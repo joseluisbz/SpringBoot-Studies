@@ -1,37 +1,37 @@
 package org.bz.app.mspeople.services;
 
 
-import org.bz.app.mspeople.dtos.PhoneDTO;
+import org.bz.app.mspeople.dtos.PhoneRequestDTO;
 import org.bz.app.mspeople.dtos.RoleDTO;
-import org.bz.app.mspeople.dtos.UserDTO;
+import org.bz.app.mspeople.dtos.UserRequestDTO;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
 
-    Iterable<UserDTO> findAll();
+    Iterable<UserRequestDTO> findAll();
 
-    Optional<UserDTO> findById(UUID id);
+    Optional<UserRequestDTO> findById(UUID id);
 
-    Optional<UserDTO> findFirstByEmailIgnoreCase(String email);
+    Optional<UserRequestDTO> findFirstByEmailIgnoreCase(String email);
 
-    Optional<UserDTO> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id);
+    Optional<UserRequestDTO> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id);
 
-    UserDTO save(UserDTO userDTO);
+    UserRequestDTO save(UserRequestDTO userRequestDTO);
 
     void deleteById(UUID id);
 
-    Optional<UserDTO> findFirstByUsernameIgnoreCase(String username);
+    Optional<UserRequestDTO> findFirstByUsernameIgnoreCase(String username);
 
     Optional<RoleDTO> findRoleByNameIgnoreCase(String name);
 
-    Optional<UserDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id);
+    Optional<UserRequestDTO> findFirstByUsernameIgnoreCaseAndIdNot(String username, UUID id);
 
-    Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number);
+    Optional<PhoneRequestDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number);
 
-    Optional<PhoneDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id);
+    Optional<PhoneRequestDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id);
 
-    Optional<PhoneDTO> findByIdAndUserEntity_Id(UUID id, UUID user_id);
+    Optional<PhoneRequestDTO> findByIdAndUserEntity_Id(UUID id, UUID user_id);
 
 }

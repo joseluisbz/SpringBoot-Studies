@@ -3,9 +3,9 @@ package org.bz.app.mspeople.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bz.app.mspeople.dtos.PhoneDTO;
+import org.bz.app.mspeople.dtos.PhoneRequestDTO;
 import org.bz.app.mspeople.dtos.RoleDTO;
-import org.bz.app.mspeople.dtos.UserDTO;
+import org.bz.app.mspeople.dtos.UserRequestDTO;
 import org.bz.app.mspeople.exceptions.*;
 import org.bz.app.mspeople.security.exceptions.NonexistentRoleException;
 import org.bz.app.mspeople.security.exceptions.RoleEmptyException;
@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> view(@PathVariable("id") UUID id) {
-        Optional<UserDTO> optionalStoredUser = userService.findById(id);
+        Optional<UserRequestDTO> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -45,72 +45,72 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody UserDTO userDTO, BindingResult result, @RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<?> create(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result, @RequestHeader(value = "Authorization") String token) {
 
-        userPasswordValidator.validate(userDTO, result);
+        userPasswordValidator.validate(userRequestDTO, result);
         throwExceptionIfErrors(result);
 
-        Optional<UserDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCase(userDTO.getEmail());
+        Optional<UserRequestDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCase(userRequestDTO.getEmail());
 
-        Optional<UserDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCase(userDTO.getUsername());
+        Optional<UserRequestDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCase(userRequestDTO.getUsername());
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
-        throwExceptionIfPhoneIssue(userDTO.getPhones(), null);
+        throwExceptionIfPhoneIssue(userRequestDTO.getPhones(), null);
 
-        Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
+        Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userRequestDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
-            throw new NonexistentRoleException(userDTO.getRole().getName());
+            throw new NonexistentRoleException(userRequestDTO.getRole().getName());
         }
 
-        userDTO.setCreated(new Date());
-        userDTO.setIsactive(true);
-        userDTO.setToken(token);
+        userRequestDTO.setCreated(new Date());
+        userRequestDTO.setIsactive(true);
+        userRequestDTO.setToken(token);
 
-        UserDTO createdUser = userService.save(userDTO);
+        UserRequestDTO createdUser = userService.save(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
-                                  @Valid @RequestBody UserDTO userDTO, BindingResult result, @PathVariable("id") UUID id) {
+                                  @Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result, @PathVariable("id") UUID id) {
 
-        userPasswordValidator.validate(userDTO, result);
+        userPasswordValidator.validate(userRequestDTO, result);
         throwExceptionIfErrors(result);
 
-        if (!id.equals(userDTO.getId())) {
-            throw new InconsistentBodyIdException(id, userDTO.getId());
+        if (!id.equals(userRequestDTO.getId())) {
+            throw new InconsistentBodyIdException(id, userRequestDTO.getId());
         }
 
-        Optional<UserDTO> optionalStoredUser = userService.findById(id);
+        Optional<UserRequestDTO> optionalStoredUser = userService.findById(id);
         if (optionalStoredUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        Optional<UserDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCaseAndIdNot(userDTO.getEmail(), id);
+        Optional<UserRequestDTO> optionalStoredUserWithEmail = userService.findFirstByEmailIgnoreCaseAndIdNot(userRequestDTO.getEmail(), id);
 
-        Optional<UserDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCaseAndIdNot(userDTO.getUsername(), id);
+        Optional<UserRequestDTO> optionalStoredUserWithUsername = userService.findFirstByUsernameIgnoreCaseAndIdNot(userRequestDTO.getUsername(), id);
 
         throwExceptionIfEmailOrUsernameExists(optionalStoredUserWithEmail, optionalStoredUserWithUsername);
 
-        throwExceptionIfPhoneIssue(userDTO.getPhones(), id);
+        throwExceptionIfPhoneIssue(userRequestDTO.getPhones(), id);
 
-        Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userDTO.getRole().getName());
+        Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userRequestDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
-            throw new NonexistentRoleException(userDTO.getRole().getName());
+            throw new NonexistentRoleException(userRequestDTO.getRole().getName());
         }
 
-        UserDTO editedUser = optionalStoredUser.get();
-        editedUser.setName(userDTO.getName());
-        editedUser.setEmail(userDTO.getEmail());
-        editedUser.setPassword(userDTO.getPassword());
-        editedUser.setPhones(userDTO.getPhones());
+        UserRequestDTO editedUser = optionalStoredUser.get();
+        editedUser.setName(userRequestDTO.getName());
+        editedUser.setEmail(userRequestDTO.getEmail());
+        editedUser.setPassword(userRequestDTO.getPassword());
+        editedUser.setPhones(userRequestDTO.getPhones());
         editedUser.setModified(new Date());
-        editedUser.setIsactive(userDTO.isIsactive());
+        editedUser.setIsactive(userRequestDTO.isIsactive());
         editedUser.setToken(token);
-        editedUser.setRole(userDTO.getRole());
+        editedUser.setRole(userRequestDTO.getRole());
         try {
-            UserDTO updatedUser = userService.save(editedUser);
+            UserRequestDTO updatedUser = userService.save(editedUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
         } catch (Exception exp) {
             throw new DefaultException(exp.getLocalizedMessage());
@@ -154,7 +154,7 @@ public class UserController {
     }
 
 
-    private void throwExceptionIfEmailOrUsernameExists(Optional<UserDTO> optionalStoredUserWithEmail, Optional<UserDTO> optionalStoredUserWithUsername) {
+    private void throwExceptionIfEmailOrUsernameExists(Optional<UserRequestDTO> optionalStoredUserWithEmail, Optional<UserRequestDTO> optionalStoredUserWithUsername) {
         UUID uuidUserWithEmail = null;
         String userEmail = null;
         if (optionalStoredUserWithEmail.isPresent()) {
@@ -177,9 +177,9 @@ public class UserController {
         }
     }
 
-    private void throwExceptionIfPhoneIssue(Set<PhoneDTO> phones, UUID id) {
+    private void throwExceptionIfPhoneIssue(Set<PhoneRequestDTO> phones, UUID id) {
         phones.forEach(phone -> {
-            Optional<PhoneDTO> optionalPhoneDTO;
+            Optional<PhoneRequestDTO> optionalPhoneDTO;
             if (phone.getId() != null) {
                 optionalPhoneDTO = userService.findByIdAndUserEntity_Id(phone.getId(), id);
                 if (optionalPhoneDTO.isEmpty()) {
@@ -191,8 +191,8 @@ public class UserController {
                         phone.getCityCode(),
                         phone.getNumber());
                 if (optionalPhoneDTO.isPresent()) {
-                    PhoneDTO phoneDTO = optionalPhoneDTO.get();
-                    throw new ExistingPhoneException(phoneDTO.getCountryCode(), phoneDTO.getCityCode(), phoneDTO.getNumber());
+                    PhoneRequestDTO phoneRequestDTO = optionalPhoneDTO.get();
+                    throw new ExistingPhoneException(phoneRequestDTO.getCountryCode(), phoneRequestDTO.getCityCode(), phoneRequestDTO.getNumber());
                 }
 
             }
