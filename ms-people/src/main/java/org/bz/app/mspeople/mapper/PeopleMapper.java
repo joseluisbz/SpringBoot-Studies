@@ -1,8 +1,6 @@
 package org.bz.app.mspeople.mapper;
 
-import org.bz.app.mspeople.dtos.PhoneDTO;
-import org.bz.app.mspeople.dtos.RoleDTO;
-import org.bz.app.mspeople.dtos.UserDTO;
+import org.bz.app.mspeople.dtos.*;
 import org.bz.app.mspeople.entities.PhoneEntity;
 import org.bz.app.mspeople.entities.UserEntity;
 import org.bz.app.mspeople.security.entities.RoleSecurity;
@@ -18,9 +16,9 @@ public interface PeopleMapper {
 
 
     @Mapping(source = "phones", target = "phoneEntities", qualifiedByName = "phoneDTOToEntity")
-    UserEntity userDTOToEntity(UserDTO userDTO);
+    UserEntity userDTOToEntity(UserRequestDTO userRequestDTO);
 
-    UserSecurity userDTOToSecurity(UserDTO userDTO);
+    UserSecurity userDTOToSecurity(UserRequestDTO userRequestDTO);
 
     RoleSecurity roleDTOToSecurity(RoleDTO roleDTO);
 
@@ -34,18 +32,18 @@ public interface PeopleMapper {
     @Mapping(source = "cityCode", target = "cityCode")
     @Mapping(source = "countryCode", target = "countryCode")
     @Mapping(target = "userEntity", ignore = true)
-    PhoneEntity phoneDTOToEntity(PhoneDTO phoneDTO);
+    PhoneEntity phoneDTOToEntity(PhoneRequestDTO phoneRequestDTO);
 
     @Mapping(source = "phoneEntities", target = "phones", qualifiedByName = "phoneEntityToDTO")
-    UserDTO userEntityToDTO(UserEntity userEntity);
+    UserResponseDTO userEntityToDTO(UserEntity userEntity);
 
-    UserDTO userSecurityToDTO(UserSecurity userSecurity);
+    UserResponseDTO userSecurityToDTO(UserSecurity userSecurity);
 
     RoleDTO roleSecurityToDTO(RoleSecurity roleSecurity);
 
     @AfterMapping
-    default void afterMappingUserEntityToDTO(@MappingTarget UserDTO userDTO) {
-        userDTO.getPhones().forEach(phone -> phone.setUser(userDTO));
+    default void afterMappingUserEntityToDTO(@MappingTarget UserResponseDTO userResponseDTO) {
+        userResponseDTO.getPhones().forEach(phone -> phone.setUser(userResponseDTO));
     }
 
     @Named("phoneEntityToDTO")
@@ -53,7 +51,7 @@ public interface PeopleMapper {
     @Mapping(source = "cityCode", target = "cityCode")
     @Mapping(source = "countryCode", target = "countryCode")
     @Mapping(target = "user", ignore = true)
-    PhoneDTO phoneEntityToDTO(PhoneEntity phoneEntity);
+    PhoneResponseDTO phoneEntityToDTO(PhoneEntity phoneEntity);
 
     default <T> List<T> castIterableToList(Iterable<T> iterable) {
         return StreamSupport
@@ -61,7 +59,7 @@ public interface PeopleMapper {
                 .toList();
     }
 
-    List<UserDTO> userEntityToDTO(List<UserEntity> listUserEntity);
+    List<UserResponseDTO> userEntityToDTO(List<UserEntity> listUserEntity);
 
     default <T> T unwrapOptional(Optional<T> optional) {
         return optional.orElse(null);
