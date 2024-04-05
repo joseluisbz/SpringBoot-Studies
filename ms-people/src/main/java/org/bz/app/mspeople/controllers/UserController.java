@@ -119,13 +119,26 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+
     private void throwExceptionIfErrors(BindingResult bindingResult) {
-        Map<String, String> mapErrors = bindingResult
+
+        List<FieldError> listFieldErrors = bindingResult
                 .getAllErrors()
                 .stream()
                 .map(e -> (FieldError) e)
+                //.filter(distinctByFirstKey(FieldError::getField))
+                .toList();
+
+        Map<String, String> mapErrors = listFieldErrors
+                .stream()
                 .filter(fe -> fe.getDefaultMessage() != null)
-                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+                //.collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage))
+                .collect(Collectors.toMap(
+                                FieldError::getField,
+                                FieldError::getDefaultMessage,
+                                (oldValue, newValue) -> newValue
+                        )
+                );
 
         if (mapErrors.containsKey("password")) {
             String defaultMessage = mapErrors.get("password");
@@ -147,6 +160,11 @@ public class UserController {
             mapErrors.remove("role");
             throw new RoleEmptyException(defaultMessage);
         }
+    }
+
+    private static <T> Predicate<T> distinctByFirstKey(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> firstSeen = new ConcurrentHashMap<>();
+        return t -> firstSeen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     private void throwExceptionIfEmailOrUsernameExists(Optional<UserResponseDTO> optionalStoredUserWithEmail, Optional<UserResponseDTO> optionalStoredUserWithUsername) {
