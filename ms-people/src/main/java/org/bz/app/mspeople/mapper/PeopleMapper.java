@@ -3,6 +3,7 @@ package org.bz.app.mspeople.mapper;
 import org.bz.app.mspeople.dtos.*;
 import org.bz.app.mspeople.entities.PhoneEntity;
 import org.bz.app.mspeople.entities.UserEntity;
+import org.bz.app.mspeople.security.entities.AuthoritySecurity;
 import org.bz.app.mspeople.security.entities.RoleSecurity;
 import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.mapstruct.*;
@@ -28,9 +29,6 @@ public interface PeopleMapper {
     }
 
     @Named("phoneDTOToEntity")
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "cityCode", target = "cityCode")
-    @Mapping(source = "countryCode", target = "countryCode")
     @Mapping(target = "userEntity", ignore = true)
     PhoneEntity phoneDTOToEntity(PhoneRequestDTO phoneRequestDTO);
 
@@ -39,7 +37,29 @@ public interface PeopleMapper {
 
     UserResponseDTO userSecurityToDTO(UserSecurity userSecurity);
 
+    @Mapping(source = "userSecurity.id", target = "id")
+    @Mapping(source = "userEntity.email", target = "email")
+    @Mapping(source = "userSecurity.username", target = "username")
+
+    @Mapping(source = "userEntity.name", target = "name")
+    @Mapping(source = "userEntity.phoneEntities", target = "phones", qualifiedByName = "phoneEntityToDTO")
+    @Mapping(source = "userEntity.created", target = "created")
+    @Mapping(source = "userEntity.modified", target = "modified")
+    @Mapping(source = "userEntity.lastLogin", target = "lastLogin")
+    @Mapping(source = "userEntity.isactive", target = "isactive")
+    @Mapping(source = "userEntity.token", target = "token")
+
+    @Mapping(source = "userSecurity.accountNonExpired", target = "accountNonExpired")
+    @Mapping(source = "userSecurity.accountNonLocked", target = "accountNonLocked")
+    @Mapping(source = "userSecurity.credentialsNonExpired", target = "credentialsNonExpired")
+    @Mapping(source = "userSecurity.enabled", target = "enabled")
+    @Mapping(source = "userSecurity.role.securityAuthorities", target = "role.authorities", qualifiedByName = "authoritySecurityToDTO")
+    UserResponseDTO userEntityAndSecurityToDTO(UserEntity userEntity, UserSecurity userSecurity);
+
     RoleDTO roleSecurityToDTO(RoleSecurity roleSecurity);
+
+    @Named("authoritySecurityToDTO")
+    AuthorityDTO authoritySecurityToDTO(AuthoritySecurity authoritySecurity);
 
     @AfterMapping
     default void afterMappingUserEntityToDTO(@MappingTarget UserResponseDTO userResponseDTO) {
@@ -47,9 +67,6 @@ public interface PeopleMapper {
     }
 
     @Named("phoneEntityToDTO")
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "cityCode", target = "cityCode")
-    @Mapping(source = "countryCode", target = "countryCode")
     @Mapping(target = "user", ignore = true)
     PhoneResponseDTO phoneEntityToDTO(PhoneEntity phoneEntity);
 

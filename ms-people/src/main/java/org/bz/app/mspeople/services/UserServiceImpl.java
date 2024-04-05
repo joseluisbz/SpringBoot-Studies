@@ -11,8 +11,10 @@ import org.bz.app.mspeople.entities.UserEntity;
 import org.bz.app.mspeople.mapper.PeopleMapper;
 import org.bz.app.mspeople.repositories.PhoneRepository;
 import org.bz.app.mspeople.repositories.UserRepository;
+import org.bz.app.mspeople.security.entities.AuthoritySecurity;
 import org.bz.app.mspeople.security.entities.RoleSecurity;
 import org.bz.app.mspeople.security.entities.UserSecurity;
+import org.bz.app.mspeople.security.repositories.AuthoritySecurityRepository;
 import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private final UserSecurityRepository userSecurityRepository;
 
     private final RoleSecurityRepository roleSecurityRepository;
+
+    private final AuthoritySecurityRepository authoritySecurityRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -101,7 +105,11 @@ public class UserServiceImpl implements UserService {
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserSecurity savedUserSecurity = userSecurityRepository.save(userSecurity);
 
-        UserResponseDTO savedUserResponseDTO = peopleMapper.userEntityToDTO(savedUserEntity);
+        Set<AuthoritySecurity> setSecurityAuthorities = authoritySecurityRepository.findByRoleSecurities_Id(savedUserSecurity.getRole().getId());
+        savedUserSecurity.getRole().setSecurityAuthorities(setSecurityAuthorities);
+        System.out.println("setSecurityAuthorities: " + setSecurityAuthorities);
+
+        UserResponseDTO savedUserResponseDTO = peopleMapper.userEntityAndSecurityToDTO(savedUserEntity, savedUserSecurity);
         return savedUserResponseDTO;
     }
 

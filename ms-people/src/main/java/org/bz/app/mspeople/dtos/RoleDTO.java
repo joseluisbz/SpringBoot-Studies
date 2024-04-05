@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -23,6 +24,8 @@ public class RoleDTO implements Serializable {
     @NotEmpty
     @Size(max = 16)
     private String name;
+
+    private Set<AuthorityDTO> authorities;
 
     public RoleDTO(String name) {
         this.name = name;
@@ -42,5 +45,13 @@ public class RoleDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<AuthorityDTO> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<AuthorityDTO> authorities) {
+        this.authorities = authorities;
     }
 }
