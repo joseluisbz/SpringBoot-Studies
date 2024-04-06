@@ -23,7 +23,7 @@ public abstract class UserAncestry implements Serializable {
     @Column(name = "id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    @Column(nullable = false, length = 16)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, unique = true)

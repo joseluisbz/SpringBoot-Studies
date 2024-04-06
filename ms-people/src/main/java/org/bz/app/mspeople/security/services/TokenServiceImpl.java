@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecureDigestAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
+@Service
 public class TokenServiceImpl implements TokenService {
 
     @Value("${token.minutes.expiration}")
@@ -49,8 +51,8 @@ public class TokenServiceImpl implements TokenService {
     }
 
     private SecretKey secretKey() {
-        byte[] passwordDecoded = Decoders.BASE64.decode(ENCODED_SECRET_KEY);
-        return Keys.hmacShaKeyFor(passwordDecoded);
+        byte[] decodedSecretKey = Decoders.BASE64.decode(ENCODED_SECRET_KEY);
+        return Keys.hmacShaKeyFor(decodedSecretKey);
     }
 
     private Claims extractAllClaims(String token) {

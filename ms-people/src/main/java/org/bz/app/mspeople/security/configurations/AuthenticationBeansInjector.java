@@ -1,16 +1,15 @@
 package org.bz.app.mspeople.security.configurations;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+@Configuration
 public class AuthenticationBeansInjector {
 
     @Bean
@@ -18,7 +17,7 @@ public class AuthenticationBeansInjector {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
+    //@Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -31,6 +30,7 @@ public class AuthenticationBeansInjector {
         return new BCryptPasswordEncoder();
     }
 
+    /*
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
         UserDetails userDetails = User.withUsername("joseluis")
@@ -39,4 +39,5 @@ public class AuthenticationBeansInjector {
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
     }
+    */
 }

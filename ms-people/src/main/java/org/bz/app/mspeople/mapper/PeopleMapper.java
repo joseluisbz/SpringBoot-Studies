@@ -38,6 +38,7 @@ public interface PeopleMapper {
     UserResponseDTO userSecurityToDTO(UserSecurity userSecurity);
 
     @Mapping(source = "userSecurity.id", target = "id")
+    @Mapping(source = "userSecurity.password", target = "password")
     @Mapping(source = "userEntity.email", target = "email")
     @Mapping(source = "userSecurity.username", target = "username")
 
@@ -53,7 +54,7 @@ public interface PeopleMapper {
     @Mapping(source = "userSecurity.accountNonLocked", target = "accountNonLocked")
     @Mapping(source = "userSecurity.credentialsNonExpired", target = "credentialsNonExpired")
     @Mapping(source = "userSecurity.enabled", target = "enabled")
-    @Mapping(source = "userSecurity.role.securityAuthorities", target = "role.authorities", qualifiedByName = "authoritySecurityToDTO")
+    @Mapping(source = "userSecurity.role.authoritySecurities", target = "role.authorities", qualifiedByName = "authoritySecurityToDTO")
     UserResponseDTO userEntityAndSecurityToDTO(UserEntity userEntity, UserSecurity userSecurity);
 
     RoleDTO roleSecurityToDTO(RoleSecurity roleSecurity);

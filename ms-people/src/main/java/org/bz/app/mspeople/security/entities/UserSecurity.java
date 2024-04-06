@@ -80,7 +80,7 @@ public class UserSecurity extends UserAncestry implements UserDetails {
 
     @Override
     public Set<GrantedAuthority> getAuthorities() {
-        return role.getSecurityAuthorities()
+        return role.getAuthoritySecurities()
                 .stream()
                 .map(s -> (GrantedAuthority) s)
                 .collect(Collectors.toSet());

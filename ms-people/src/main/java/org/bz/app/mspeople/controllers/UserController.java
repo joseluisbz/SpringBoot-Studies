@@ -66,7 +66,6 @@ public class UserController {
 
         userRequestDTO.setCreated(new Date());
         userRequestDTO.setIsactive(true);
-        userRequestDTO.setToken(token);
 
         UserResponseDTO createdUser = userService.save(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);

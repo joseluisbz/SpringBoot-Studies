@@ -34,7 +34,7 @@ public class RoleSecurity implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "ROLE_AUTHORITY_MAPPING", joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private Set<AuthoritySecurity> securityAuthorities;
+    private Set<AuthoritySecurity> authoritySecurities;
 
     public UUID getId() {
         return id;
@@ -60,11 +60,11 @@ public class RoleSecurity implements Serializable {
         this.users = users;
     }
 
-    public Set<AuthoritySecurity> getSecurityAuthorities() {
-        return securityAuthorities;
+    public Set<AuthoritySecurity> getAuthoritySecurities() {
+        return authoritySecurities;
     }
 
-    public void setSecurityAuthorities(Set<AuthoritySecurity> securityAuthorities) {
-        this.securityAuthorities = securityAuthorities;
+    public void setAuthoritySecurities(Set<AuthoritySecurity> authoritySecurities) {
+        this.authoritySecurities = authoritySecurities;
     }
 }

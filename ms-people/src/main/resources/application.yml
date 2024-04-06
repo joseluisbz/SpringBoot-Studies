@@ -23,3 +23,7 @@ format:
 token:
   minutes:
     expiration: 30
+
+encoded:
+  secret:
+    key: 'U2Ugc3VtaW5pc3RyYSB1bmEgY2xhdmUgbGFyZ2EgcGFyYSBjdW1wbGlyIGNvbiBsbyBFeGlnaWRvIHBvciBlbCBTdGFuZGFyZA==' #Se suministra una clave larga para cumplir con lo Exigido por el Standard

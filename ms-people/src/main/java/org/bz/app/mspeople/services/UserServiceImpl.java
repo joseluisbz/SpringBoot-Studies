@@ -18,6 +18,7 @@ import org.bz.app.mspeople.security.repositories.AuthoritySecurityRepository;
 import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.bz.app.mspeople.util.JsonMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private final RoleSecurityRepository roleSecurityRepository;
 
     private final AuthoritySecurityRepository authoritySecurityRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -108,11 +111,14 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
         log.info("userRequestDTO: " + JsonMapper.writeValueAsString(userRequestDTO));
 
+        String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+        userRequestDTO.setPassword(encodedPassword);
+
         UserEntity userEntity = peopleMapper.userDTOToEntity(userRequestDTO);
         UserSecurity userSecurity = peopleMapper.userDTOToSecurity(userRequestDTO);
 
         Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(userSecurity.getRole().getName());
-        userSecurity.setRole(optionalRoleSecurity.get());
+        optionalRoleSecurity.ifPresent(userSecurity::setRole);
 
         if (userEntity.getId() == null) {
             UUID id = UUID.randomUUID();
@@ -123,8 +129,8 @@ public class UserServiceImpl implements UserService {
         UserEntity savedUserEntity = userRepository.save(userEntity);
         UserSecurity savedUserSecurity = userSecurityRepository.save(userSecurity);
 
-        Set<AuthoritySecurity> setSecurityAuthorities = authoritySecurityRepository.findByRoleSecurities_Id(savedUserSecurity.getRole().getId());
-        savedUserSecurity.getRole().setSecurityAuthorities(setSecurityAuthorities);
+        Set<AuthoritySecurity> setSecurityAuthority = authoritySecurityRepository.findByRoleSecurities_Id(savedUserSecurity.getRole().getId());
+        savedUserSecurity.getRole().setAuthoritySecurities(setSecurityAuthority);
 
         UserResponseDTO userResponseDTO = peopleMapper.userEntityAndSecurityToDTO(savedUserEntity, savedUserSecurity);
         log.info("userResponseDTO: " + JsonMapper.writeValueAsString(userResponseDTO));

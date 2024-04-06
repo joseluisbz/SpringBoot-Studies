@@ -23,6 +23,8 @@ public class UserResponseDTO implements Serializable {
 
     private UUID id;
 
+    private String password;
+
     private String email;
 
     private String username;
@@ -63,6 +65,14 @@ public class UserResponseDTO implements Serializable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface TokenService {
 
-    String generateToken(String userDetails, String id, Map<String, Object> extraClaims);
+    String generateToken(String subject, String id, Map<String, Object> extraClaims);
 
 }
