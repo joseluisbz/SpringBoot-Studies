@@ -1,58 +1,59 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.4'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'org.bz.egg-price'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.4'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.2.4'
 
-	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.4'
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.2.4'
 
-	//Security
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.2.4'
+    //Security
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.2.4'
 
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-root', version: '0.12.5', ext: 'pom'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-root', version: '0.12.5', ext: 'pom'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
 
-	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4'
 
-	//DB
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
-	implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
+    //DB
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
+    implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.7.2'
 
-	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
-	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.0'
-	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
 
-	//Util
-	implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
-	implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
-	implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
-	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
+    //Util
+    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.5.Final'
+    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.5.Final'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

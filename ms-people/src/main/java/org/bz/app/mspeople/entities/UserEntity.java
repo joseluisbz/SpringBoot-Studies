@@ -39,6 +39,7 @@ public class UserEntity extends UserAncestry implements Serializable {
 
     private boolean isactive;
 
+    @Column(length = 512)
     private String token;
 
     @PrePersist
