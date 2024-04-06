@@ -5,9 +5,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bz.app.mspeople.dtos.*;
 import org.bz.app.mspeople.exceptions.*;
-import org.bz.app.mspeople.security.exceptions.NonexistentRoleException;
-import org.bz.app.mspeople.security.exceptions.RoleEmptyException;
-import org.bz.app.mspeople.security.exceptions.UsernameEmptyException;
+import org.bz.app.mspeople.security.exceptions.NonexistentRoleBadRequestException;
+import org.bz.app.mspeople.security.exceptions.RoleEmptyBadRequestException;
+import org.bz.app.mspeople.security.exceptions.UsernameEmptyBadRequestException;
 import org.bz.app.mspeople.services.UserService;
 import org.bz.app.mspeople.validations.UserPasswordValidator;
 import org.springframework.http.HttpStatus;
@@ -61,7 +61,7 @@ public class UserController {
 
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userRequestDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
-            throw new NonexistentRoleException(userRequestDTO.getRole().getName());
+            throw new NonexistentRoleBadRequestException(userRequestDTO.getRole().getName());
         }
 
         userRequestDTO.setCreated(new Date());
@@ -79,7 +79,7 @@ public class UserController {
         throwExceptionIfErrors(result);
 
         if (!id.equals(userRequestDTO.getId())) {
-            throw new InconsistentBodyIdException(id, userRequestDTO.getId());
+            throw new InconsistentBodyIdBadRequestException(id, userRequestDTO.getId());
         }
 
         Optional<UserResponseDTO> optionalStoredUser = userService.findById(id);
@@ -97,7 +97,7 @@ public class UserController {
 
         Optional<RoleDTO> optionalStoredRole = userService.findRoleByNameIgnoreCase(userRequestDTO.getRole().getName());
         if (optionalStoredRole.isEmpty()) {
-            throw new NonexistentRoleException(userRequestDTO.getRole().getName());
+            throw new NonexistentRoleBadRequestException(userRequestDTO.getRole().getName());
         }
         UserResponseDTO editedUser = optionalStoredUser.get();
         userRequestDTO.setModified(new Date());
@@ -108,7 +108,7 @@ public class UserController {
             UserResponseDTO updatedUser = userService.save(userRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
         } catch (Exception exp) {
-            throw new DefaultException(exp.getLocalizedMessage());
+            throw new DefaultBadRequestException(exp.getLocalizedMessage());
         }
     }
 
@@ -142,22 +142,22 @@ public class UserController {
         if (mapErrors.containsKey("password")) {
             String defaultMessage = mapErrors.get("password");
             mapErrors.remove("password");
-            throw new PatternPasswordException(defaultMessage);
+            throw new PatternPasswordBadRequestException(defaultMessage);
         }
         if (mapErrors.containsKey("email")) {
             String defaultMessage = mapErrors.get("email");
             mapErrors.remove("email");
-            throw new PatternEmailException(defaultMessage);
+            throw new PatternEmailBadRequestException(defaultMessage);
         }
         if (mapErrors.containsKey("username")) {
             String defaultMessage = mapErrors.get("username");
             mapErrors.remove("username");
-            throw new UsernameEmptyException(defaultMessage);
+            throw new UsernameEmptyBadRequestException(defaultMessage);
         }
         if (mapErrors.containsKey("role")) {
             String defaultMessage = mapErrors.get("role");
             mapErrors.remove("role");
-            throw new RoleEmptyException(defaultMessage);
+            throw new RoleEmptyBadRequestException(defaultMessage);
         }
     }
 
@@ -185,7 +185,7 @@ public class UserController {
             if (uuidUserWithEmail != null && uuidUserWithUsername != null) {
                 uuidAreEquals = uuidUserWithEmail.toString().equals(uuidUserWithUsername.toString());
             }
-            throw new ExistingMailOrUsernameException(userEmail, userUsername, uuidAreEquals);
+            throw new ExistingMailOrUsernameBadRequestException(userEmail, userUsername, uuidAreEquals);
         }
     }
 
@@ -195,7 +195,7 @@ public class UserController {
             if (phone.getId() != null) {
                 optionalPhoneDTO = userService.findByIdAndUserEntity_Id(phone.getId(), id);
                 if (optionalPhoneDTO.isEmpty()) {
-                    throw new NotAssignablePhoneException(phone.getId(), id);
+                    throw new NotAssignablePhoneBadRequestException(phone.getId(), id);
                 }
             } else {
                 optionalPhoneDTO = userService.findByCountryCodeAndCityCodeAndNumber(
@@ -204,7 +204,7 @@ public class UserController {
                         phone.getNumber());
                 if (optionalPhoneDTO.isPresent()) {
                     PhoneResponseDTO phoneResponseDTO = optionalPhoneDTO.get();
-                    throw new ExistingPhoneException(phoneResponseDTO.getCountryCode(), phoneResponseDTO.getCityCode(), phoneResponseDTO.getNumber());
+                    throw new ExistingPhoneBadRequestException(phoneResponseDTO.getCountryCode(), phoneResponseDTO.getCityCode(), phoneResponseDTO.getNumber());
                 }
 
             }

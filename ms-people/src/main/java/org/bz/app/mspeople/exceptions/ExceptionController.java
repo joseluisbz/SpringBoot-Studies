@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(DefaultException.class)
-    public ResponseEntity<CustomExceptionResponse> defaultBadRequest(Exception exception) {
-        CustomExceptionResponse errors = new CustomExceptionResponse();
-        errors.setMessage(exception.getLocalizedMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(DefaultBadRequestException.class)
+    public ResponseEntity<CustomExceptionResponse> defaultBadRequest(DefaultBadRequestException defaultBadRequestException) {
+        CustomExceptionResponse customExceptionResponse = new CustomExceptionResponse();
+        customExceptionResponse.setMessage(defaultBadRequestException.getLocalizedMessage());
+        customExceptionResponse.setDateTime(LocalDateTime.now());
+        return new ResponseEntity<>(customExceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DefaultInternalServerErrorException.class)

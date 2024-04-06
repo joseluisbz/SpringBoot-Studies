@@ -2,11 +2,11 @@ package org.bz.app.mspeople.exceptions;
 
 import java.io.Serial;
 
-public class ExistingPhoneException extends DefaultException {
+public class ExistingPhoneBadRequestException extends DefaultBadRequestException {
     @Serial
     private static final long serialVersionUID = -2634323841999847616L;
 
-    public ExistingPhoneException(Integer countryCode, Integer cityCode, Long number) {
+    public ExistingPhoneBadRequestException(Integer countryCode, Integer cityCode, Long number) {
         super("The phone with countryCode: '"
                 .concat(countryCode.toString())
                 .concat("', cityCode: '")
