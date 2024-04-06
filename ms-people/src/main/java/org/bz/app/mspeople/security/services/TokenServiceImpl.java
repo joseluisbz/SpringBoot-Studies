@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecureDigestAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.bz.app.mspeople.exceptions.DefaultInternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -27,23 +28,32 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String generateToken(String subject, String id, Map<String, Object> extraClaims) {
+        try {
+            LocalDateTime localDateTimeNow = LocalDateTime.now();
+            LocalDateTime localDateTimeAfter = localDateTimeNow.plusMinutes(MINUTES_EXPIRATION);
+            Date issuedAt = Date.from(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant());
+            Date expiration = Date.from(localDateTimeAfter.atZone(ZoneId.systemDefault()).toInstant());
 
-        LocalDateTime localDateTimeNow = LocalDateTime.now();
-        LocalDateTime localDateTimeAfter = localDateTimeNow.plusMinutes(MINUTES_EXPIRATION);
-        Date issuedAt = Date.from(localDateTimeNow.atZone(ZoneId.systemDefault()).toInstant());
-        Date expiration = Date.from(localDateTimeAfter.atZone(ZoneId.systemDefault()).toInstant());
+            SecureDigestAlgorithm<SecretKey, SecretKey> secureDigestAlgorithm = Jwts.SIG.HS512;
 
-        SecureDigestAlgorithm<SecretKey, SecretKey> secureDigestAlgorithm = Jwts.SIG.HS512;
-
-        return Jwts
-                .builder()
-                .signWith(secretKey(), secureDigestAlgorithm)
-                .id(id)
-                .claims(extraClaims)
-                .subject(subject)
-                .issuedAt(issuedAt)
-                .expiration(expiration)
-                .compact();
+            return Jwts
+                    .builder()
+                    .signWith(secretKey(), secureDigestAlgorithm)
+                    .id(id)
+                    .claims(extraClaims)
+                    .subject(subject)
+                    .issuedAt(issuedAt)
+                    .expiration(expiration)
+                    .compact();
+        } catch (Exception exception) {
+            String methodname = StackWalker
+                    .getInstance()
+                    .walk(stackFrame -> stackFrame
+                            .findFirst()
+                            .map(StackWalker.StackFrame::getMethodName))
+                    .orElse("");
+            throw new DefaultInternalServerErrorException(exception, methodname);
+        }
     }
 
     private SecretKey secretKey() {
