@@ -1,6 +1,7 @@
 package org.bz.app.mspeople.security.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,19 +14,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class HttpSecurityConfiguration {
 
-
     @Autowired
-    AuthenticationProvider authenticationProvider;
+    @Qualifier("customAuthenticationProvider")
+    AuthenticationProvider customAuthenticationProvider;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
+                .authenticationProvider(customAuthenticationProvider)
                 .authorizeHttpRequests(authorizeHttpRequestsCustomizer -> {
                     authorizeHttpRequestsCustomizer
                             .requestMatchers(HttpMethod.POST, "/api/users")
+                            .permitAll();
+                    authorizeHttpRequestsCustomizer
+                            .requestMatchers(HttpMethod.POST, "/api/authenticate")
                             .permitAll();
                     authorizeHttpRequestsCustomizer.anyRequest().permitAll();
                 })

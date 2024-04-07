@@ -22,7 +22,7 @@ format:
 
 token:
   minutes:
-    expiration: 30
+    expiration: 3
 
 encoded:
   secret:

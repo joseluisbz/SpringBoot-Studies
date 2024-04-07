@@ -20,12 +20,13 @@ import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.bz.app.mspeople.security.services.TokenService;
 import org.bz.app.mspeople.util.JsonMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.bz.app.mspeople.util.FunctionsUtil.stackFrameFunction;
@@ -47,9 +48,11 @@ public class UserServiceImpl implements UserService {
 
     private final AuthoritySecurityRepository authoritySecurityRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final TokenService tokenService;
+
+    @Autowired
+    @Qualifier("customPasswordEncoder")
+    private PasswordEncoder customPasswordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -143,13 +146,13 @@ public class UserServiceImpl implements UserService {
         try {
             log.info("userRequestDTO: " + JsonMapper.writeValueAsString(userRequestDTO));
 
-            Map<String, Object> extraClaims = generateExtraClaims(userRequestDTO);
-            String token = tokenService.generateToken(userRequestDTO.getUsername(), userRequestDTO.getEmail(), extraClaims);
+            Map<String, Object> extraClaims = tokenService.generateExtraClaims(userRequestDTO);
+            String token = tokenService.generateToken(userRequestDTO.getUsername(), null, extraClaims);
 
             log.info("Claims: " + JsonMapper.writeValueAsString(tokenService.extractAllClaims(token)));
             userRequestDTO.setToken(token);
 
-            String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
+            String encodedPassword = customPasswordEncoder.encode(userRequestDTO.getPassword());
             userRequestDTO.setPassword(encodedPassword);
 
             UserEntity userEntity = peopleMapper.userDTOToEntity(userRequestDTO);
@@ -303,35 +306,6 @@ public class UserServiceImpl implements UserService {
                 return Optional.of(peopleMapper.phoneEntityToDTO(phoneEntity));
             }
             return Optional.empty();
-        } catch (Exception exception) {
-            log.error("exception: ", exception);
-            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
-            throw new DefaultInternalServerErrorException(exception, stackFrame);
-        }
-    }
-
-    private Map<String, Object> generateExtraClaims(UserRequestDTO userRequestDTO) {
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("name", userRequestDTO.getName());
-        extraClaims.put("role", userRequestDTO.getRole().getName());
-        Set<String> authorities = getAuthoritiesByRole(userRequestDTO.getRole());
-        extraClaims.put("authorities", authorities);
-        return extraClaims;
-    }
-
-    private Set<String> getAuthoritiesByRole(RoleDTO role) {
-        try {
-            Set<String> authorities = new HashSet<>();
-            Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(role.getName());
-            if (optionalRoleSecurity.isPresent()) {
-                Set<AuthoritySecurity> setSecurityAuthority = authoritySecurityRepository.findByRoleSecurities_Id(optionalRoleSecurity.get().getId());
-                authorities = setSecurityAuthority
-                        .stream()
-                        .map(AuthoritySecurity::getAuthority)
-                        .collect(Collectors.toSet());
-            }
-
-            return authorities;
         } catch (Exception exception) {
             log.error("exception: ", exception);
             StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);

@@ -1,13 +1,14 @@
 package org.bz.app.mspeople.security.configurations;
 
-import org.bz.app.mspeople.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,23 +16,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthenticationBeansInjector {
 
     @Autowired
-    UserDetailsServiceImpl userDetailsServiceImpl;
+    @Qualifier("customUserDetailsService")
+    UserDetailsService customUserDetailsService;
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    @Bean("customAuthenticationManager")
+    public AuthenticationManager customAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
+    @Bean("customAuthenticationProvider")
+    public AuthenticationProvider customAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+        daoAuthenticationProvider.setPasswordEncoder(customPasswordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
         return daoAuthenticationProvider;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+    @Bean("customPasswordEncoder")
+    public PasswordEncoder customPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

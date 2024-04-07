@@ -14,4 +14,6 @@ public interface UserRepository extends CrudRepository<UserEntity, UUID> {
     Optional<UserEntity> findFirstByEmailIgnoreCaseAndIdNot(String email, UUID id);
 
     Optional<UserEntity> findFirstByUsernameIgnoreCaseAndIdNot(String email, UUID id);
+
+    Optional<UserEntity> findFirstByUsernameIgnoreCase(String username);
 }
