@@ -11,17 +11,20 @@ public class DefaultInternalServerErrorException extends RuntimeException {
 
     private final Exception originException;
 
-    private String catcherMethod;
+    private Class<?> catcherClass;
 
-    public DefaultInternalServerErrorException(Exception exception, String catcherMethod) {
+    private StackWalker.StackFrame stackFrame;
+
+    public DefaultInternalServerErrorException(Exception exception, Class<?> catcherClass) {
         super(exception.getLocalizedMessage());
         originException = exception;
-        this.catcherMethod = catcherMethod;
+        this.catcherClass = catcherClass;
     }
 
-    public DefaultInternalServerErrorException(Exception exception) {
+    public DefaultInternalServerErrorException(Exception exception, StackWalker.StackFrame stackFrame) {
         super(exception.getLocalizedMessage());
         originException = exception;
+        this.stackFrame = stackFrame;
     }
 
 }

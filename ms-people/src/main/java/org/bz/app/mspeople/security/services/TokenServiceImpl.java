@@ -16,6 +16,8 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
 
+import static org.bz.app.mspeople.util.FunctionsUtil.stackFrameFunction;
+
 @Slf4j
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -46,13 +48,9 @@ public class TokenServiceImpl implements TokenService {
                     .expiration(expiration)
                     .compact();
         } catch (Exception exception) {
-            String methodname = StackWalker
-                    .getInstance()
-                    .walk(stackFrame -> stackFrame
-                            .findFirst()
-                            .map(StackWalker.StackFrame::getMethodName))
-                    .orElse("");
-            throw new DefaultInternalServerErrorException(exception, methodname);
+            log.error("exception: ", exception);
+            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
+            throw new DefaultInternalServerErrorException(exception, stackFrame);
         }
     }
 
@@ -62,11 +60,15 @@ public class TokenServiceImpl implements TokenService {
     }
 
     public Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception exception) {
+            throw new DefaultInternalServerErrorException(exception, this.getClass());
+        }
     }
 
 }

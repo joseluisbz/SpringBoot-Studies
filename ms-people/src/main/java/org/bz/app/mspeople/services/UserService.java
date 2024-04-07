@@ -31,8 +31,6 @@ public interface UserService {
 
     Optional<PhoneResponseDTO> findByCountryCodeAndCityCodeAndNumber(Integer countryCode, Integer cityCode, Long number);
 
-    Optional<PhoneResponseDTO> findByCountryCodeAndCityCodeAndNumberAndUserEntity_IdNot(Integer countryCode, Integer cityCode, Long number, UUID id);
-
     Optional<PhoneResponseDTO> findByIdAndUserEntity_Id(UUID id, UUID user_id);
 
 }

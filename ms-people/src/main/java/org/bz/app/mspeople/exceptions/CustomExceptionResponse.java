@@ -13,11 +13,9 @@ public class CustomExceptionResponse {
 
     private LocalDateTime dateTime;
 
+    private String catcherClass;
+
     private String throwerMethod;
-
-    private String catcherMethod;
-
-    private String exceptionThrowerClass;
 
     private Integer lineNumber;
 
@@ -45,20 +43,12 @@ public class CustomExceptionResponse {
         this.throwerMethod = throwerMethod;
     }
 
-    public String getCatcherMethod() {
-        return catcherMethod;
+    public String getCatcherClass() {
+        return catcherClass;
     }
 
-    public void setCatcherMethod(String catcherMethod) {
-        this.catcherMethod = catcherMethod;
-    }
-
-    public String getExceptionThrowerClass() {
-        return exceptionThrowerClass;
-    }
-
-    public void setExceptionThrowerClass(String exceptionThrowerClass) {
-        this.exceptionThrowerClass = exceptionThrowerClass;
+    public void setCatcherClass(String catcherClass) {
+        this.catcherClass = catcherClass;
     }
 
     public Integer getLineNumber() {

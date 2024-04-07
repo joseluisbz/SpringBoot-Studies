@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+import static org.bz.app.mspeople.util.FunctionsUtil.getStackTraceElementByExceptionFunction;
+
+
 @ControllerAdvice
 public class ExceptionController {
 
@@ -20,16 +23,17 @@ public class ExceptionController {
 
     @ExceptionHandler(DefaultInternalServerErrorException.class)
     public ResponseEntity<CustomExceptionResponse> defaultInternalServerError(DefaultInternalServerErrorException defaultInternalServerErrorException) {
-        StackTraceElement[] arrayStackTraceElement = defaultInternalServerErrorException.getOriginException().getStackTrace();
         CustomExceptionResponse customExceptionResponse = new CustomExceptionResponse();
-        customExceptionResponse.setMessage(defaultInternalServerErrorException.getLocalizedMessage());
-        if (arrayStackTraceElement != null) {
-            customExceptionResponse.setLineNumber(arrayStackTraceElement[1].getLineNumber());
-            customExceptionResponse.setExceptionThrowerClass(arrayStackTraceElement[1].getClassName());
-            customExceptionResponse.setThrowerMethod(arrayStackTraceElement[1].getMethodName());
-            customExceptionResponse.setCatcherMethod(arrayStackTraceElement[2].getMethodName());
-        }
         customExceptionResponse.setDateTime(LocalDateTime.now());
+        customExceptionResponse.setMessage(defaultInternalServerErrorException.getLocalizedMessage());
+
+        StackTraceElement stackTraceElement = getStackTraceElementByExceptionFunction.apply(defaultInternalServerErrorException);
+
+        if (stackTraceElement != null) {
+            customExceptionResponse.setLineNumber(stackTraceElement.getLineNumber());
+            customExceptionResponse.setCatcherClass(stackTraceElement.getClassName());
+            customExceptionResponse.setThrowerMethod(stackTraceElement.getMethodName());
+        }
         return new ResponseEntity<>(customExceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
