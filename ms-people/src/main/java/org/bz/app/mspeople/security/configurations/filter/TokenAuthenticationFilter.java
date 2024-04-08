@@ -15,10 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,21 +39,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         Claims claims = tokenService.extractAllClaims(token);
         String username = claims.getSubject();
 
-        List<AuthoritySecurity> authorities = new ArrayList<>();
         Object objectList = claims.get("authorities", Object.class);
-        if (objectList instanceof List<?>) {
-            for (Object object : (List<?>) objectList) {
-                if (object instanceof LinkedHashMap<?, ?> lhm) {
-                    authorities.add(AuthoritySecurity.builder()
-                            .id(UUID.fromString((String) lhm.get("id")))
-                            .authority((String) lhm.get("authority"))
-                            .build());
-                }
-            }
-        }
-
-        /*
-        List<AuthoritySecurity> authorities1 = ((List<Object>)objectList)
+        List<AuthoritySecurity> authorities = ((List<Object>)objectList)
                 .stream()
                 .map(o -> (LinkedHashMap<String, Object>)o)
                 .map(l -> AuthoritySecurity.builder()
@@ -63,7 +48,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                         .authority((String)l.get("authority"))
                         .build()
                 ).toList();
-        */
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 username, null, authorities);
 
