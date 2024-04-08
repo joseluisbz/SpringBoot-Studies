@@ -3,6 +3,7 @@ package org.bz.app.mspeople.security.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,6 +11,7 @@ import java.io.Serial;
 import java.util.Set;
 import java.util.UUID;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result, @RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<?> create(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result) {
 
         userPasswordValidator.validate(userRequestDTO, result);
         throwExceptionIfErrors(result);

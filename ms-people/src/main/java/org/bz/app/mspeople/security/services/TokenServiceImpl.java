@@ -133,6 +133,8 @@ public class TokenServiceImpl implements TokenService {
             Map<String, Object> extraClaims = generateExtraClaims(userRequestDTO);
             String token = generateToken(authenticationRequestDTO.getUsername(), null, extraClaims);
 
+            // Actualizar el Token, y modificar la fecha de loggueo.
+
             return AuthenticationResponseDTO.builder().token(token).build();
         } catch (Exception exception) {
             log.error("exception: ", exception);
@@ -143,7 +145,7 @@ public class TokenServiceImpl implements TokenService {
 
     public Map<String, Object> generateExtraClaims(UserRequestDTO userRequestDTO) {
         try {
-            Set<String> authorities = getAuthoritiesByRole(userRequestDTO.getRole());
+            Set<AuthoritySecurity> authorities = getAuthoritiesByRole(userRequestDTO.getRole());
 
             Map<String, Object> extraClaims = new HashMap<>();
             extraClaims.put("name", userRequestDTO.getName());
@@ -157,16 +159,14 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
-    private Set<String> getAuthoritiesByRole(RoleDTO role) {
+    private Set<AuthoritySecurity> getAuthoritiesByRole(RoleDTO role) {
         try {
-            Set<String> authorities = new HashSet<>();
+            Set<AuthoritySecurity> authorities = new HashSet<>();
             Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(role.getName());
             if (optionalRoleSecurity.isPresent()) {
                 Set<AuthoritySecurity> setSecurityAuthority = authoritySecurityRepository.findByRoleSecurities_Id(optionalRoleSecurity.get().getId());
-                authorities = setSecurityAuthority
-                        .stream()
-                        .map(AuthoritySecurity::getAuthority)
-                        .collect(Collectors.toSet());
+                log.trace("setSecurityAuthority: " + setSecurityAuthority);
+                authorities = setSecurityAuthority;
             }
 
             return authorities;
