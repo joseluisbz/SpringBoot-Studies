@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Slf4j
 @Configuration
-@EnableWebSecurity
 @EnableMethodSecurity
 public class HttpSecurityConfiguration {
 
