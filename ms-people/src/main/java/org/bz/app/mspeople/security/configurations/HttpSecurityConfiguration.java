@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Slf4j
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class HttpSecurityConfiguration {
 
     @Autowired
@@ -36,16 +40,15 @@ public class HttpSecurityConfiguration {
                 )
                 .authenticationProvider(customAuthenticationProvider)
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(getAuthorizationManagerRequestByCoincidence())
+                .authorizeHttpRequests(getAuthorizationManagerRequestByMethod())
                 .build();
         log.info("defaultSecurityFilterChain: " + defaultSecurityFilterChain);
         return defaultSecurityFilterChain;
     }
 
     private static Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>
-            getAuthorizationManagerRequestByCoincidence() {
+    getAuthorizationManagerRequestByCoincidence() {
         return authorizeHttpRequestsCustomizer -> {
-
 
             authorizeHttpRequestsCustomizer
                     .requestMatchers(HttpMethod.POST, "/api/users")
@@ -75,12 +78,28 @@ public class HttpSecurityConfiguration {
                     .hasAnyAuthority("READ_ALL", "READ_SELF")
                     .anyRequest()
                     .permitAll();
-
 */
-
             authorizeHttpRequestsCustomizer
                     .requestMatchers("/api/users/{id}")
                     .hasAnyAuthority("READ_ALL", "READ_SELF");
+
+            authorizeHttpRequestsCustomizer
+                    .requestMatchers(HttpMethod.POST, "/api/authenticate")
+                    .permitAll();
+
+            authorizeHttpRequestsCustomizer
+                    .anyRequest()
+                    .authenticated();
+        };
+    }
+
+    private static Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>
+    getAuthorizationManagerRequestByMethod() {
+        return authorizeHttpRequestsCustomizer -> {
+
+            authorizeHttpRequestsCustomizer
+                    .requestMatchers(HttpMethod.POST, "/api/users")
+                    .permitAll();
 
             authorizeHttpRequestsCustomizer
                     .requestMatchers(HttpMethod.POST, "/api/authenticate")

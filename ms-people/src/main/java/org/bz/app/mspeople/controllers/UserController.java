@@ -12,6 +12,7 @@ import org.bz.app.mspeople.services.UserService;
 import org.bz.app.mspeople.validations.UserPasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +32,13 @@ public class UserController {
 
     private final UserPasswordValidator userPasswordValidator;
 
+    @PreAuthorize("hasAuthority('READ_ALL')")
     @GetMapping
     public ResponseEntity<?> list() {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
     public ResponseEntity<?> view(@PathVariable("id") UUID id) {
         Optional<UserResponseDTO> optionalStoredUser = userService.findById(id);
@@ -45,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok().body(optionalStoredUser.get());
     }
 
+    @PreAuthorize("!hasAnyRole('ADMIN', 'USER')")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result) {
 
@@ -71,6 +75,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
+    @PreAuthorize("hasAnyAuthority('EDIT_ALL', 'EDIT_SELF')")
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
                                   @Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result, @PathVariable("id") UUID id) {

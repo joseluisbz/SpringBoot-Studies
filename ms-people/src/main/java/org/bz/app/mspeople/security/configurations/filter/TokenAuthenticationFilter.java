@@ -15,7 +15,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,16 +40,25 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         Claims claims = tokenService.extractAllClaims(token);
         String username = claims.getSubject();
+        String role = claims.get("role", String.class);
 
         Object objectList = claims.get("authorities", Object.class);
-        List<AuthoritySecurity> authorities = ((List<Object>)objectList)
+        List<AuthoritySecurity> authorities = ((List<Object>) objectList)
                 .stream()
-                .map(o -> (LinkedHashMap<String, Object>)o)
+                .map(o -> (LinkedHashMap<String, Object>) o)
                 .map(l -> AuthoritySecurity.builder()
-                        .id(UUID.fromString((String)l.get("id")))
-                        .authority((String)l.get("authority"))
+                        .id(UUID.fromString((String) l.get("id")))
+                        .authority((String) l.get("authority"))
                         .build()
-                ).toList();
+                ).collect(Collectors.toList());
+
+        AuthoritySecurity roleAuthoritySecurity = AuthoritySecurity
+                .builder()
+                .id(UUID.randomUUID())
+                .authority("ROLE_" + role)
+                .build();
+
+        authorities.add(roleAuthoritySecurity);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 username, null, authorities);
