@@ -2,8 +2,8 @@ package org.bz.app.mspeople.security.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.bz.app.mspeople.entities.UserAncestry;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

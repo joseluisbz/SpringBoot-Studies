@@ -2,6 +2,8 @@ package org.bz.app.mspeople.security.configurations;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bz.app.mspeople.security.configurations.filter.TokenAuthenticationFilter;
+import org.bz.app.mspeople.security.entities.RoleSecurity;
+import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +13,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,7 +31,28 @@ public class HttpSecurityConfiguration {
     AuthenticationProvider customAuthenticationProvider;
 
     @Autowired
+    @Qualifier("customPasswordEncoder")
+    private PasswordEncoder customPasswordEncoder;
+
+    @Autowired
     TokenAuthenticationFilter tokenAuthenticationFilter;
+
+
+    @Bean
+    public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
+        RoleSecurity roleSecurity = RoleSecurity
+                .builder()
+                .name("ADMIN")
+                .build();
+        UserSecurity userSecurity = UserSecurity
+                .builder()
+                .password(customPasswordEncoder.encode("userPassword"))
+                .username("joseluisbz")
+                .role(roleSecurity)
+                .build();
+        return new InMemoryUserDetailsManager(userSecurity);
+    }
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

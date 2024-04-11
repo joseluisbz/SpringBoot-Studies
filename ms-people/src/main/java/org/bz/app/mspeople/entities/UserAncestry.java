@@ -6,11 +6,13 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
+@SuperBuilder
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor

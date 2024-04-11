@@ -3,6 +3,7 @@ package org.bz.app.mspeople.security.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
