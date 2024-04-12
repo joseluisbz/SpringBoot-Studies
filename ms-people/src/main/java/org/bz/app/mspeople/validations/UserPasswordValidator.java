@@ -1,7 +1,8 @@
 package org.bz.app.mspeople.validations;
 
+import lombok.RequiredArgsConstructor;
 import org.bz.app.mspeople.dtos.UserRequestDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -11,14 +12,15 @@ import org.springframework.validation.Validator;
 import java.util.Locale;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Component
 public class UserPasswordValidator implements Validator {
 
     @Value("${format.password}")
     private String regexp;
 
-    @Autowired
-    private MessageSource messageSource;
+    @Qualifier("customMessageSource")
+    private final MessageSource messageSource;
 
     @Override
     public boolean supports(Class<?> clazz) {

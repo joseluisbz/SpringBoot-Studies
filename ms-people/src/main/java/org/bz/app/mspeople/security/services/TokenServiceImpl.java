@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecureDigestAlgorithm;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserRequestDTO;
@@ -20,7 +21,6 @@ import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.bz.app.mspeople.security.repositories.AuthoritySecurityRepository;
 import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -32,16 +32,15 @@ import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.bz.app.mspeople.util.FunctionsUtil.stackFrameFunction;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    @Autowired
-    private PeopleMapper peopleMapper;
+    private final PeopleMapper peopleMapper;
 
     @Value("${token.minutes.expiration}")
     private Long MINUTES_EXPIRATION;
@@ -49,21 +48,16 @@ public class TokenServiceImpl implements TokenService {
     @Value("${encoded.secret.key}")
     private String ENCODED_SECRET_KEY;
 
-    @Autowired
     @Qualifier("customAuthenticationProvider")
-    AuthenticationProvider customAuthenticationProvider;
+    private final AuthenticationProvider customAuthenticationProvider;
 
-    @Autowired
-    UserSecurityRepository userSecurityRepository;
+    private final UserSecurityRepository userSecurityRepository;
 
-    @Autowired
-    RoleSecurityRepository roleSecurityRepository;
+    private final RoleSecurityRepository roleSecurityRepository;
 
-    @Autowired
-    AuthoritySecurityRepository authoritySecurityRepository;
+    private final AuthoritySecurityRepository authoritySecurityRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public String generateToken(String subject, String id, Map<String, Object> extraClaims) {

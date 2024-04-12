@@ -1,6 +1,6 @@
 package org.bz.app.mspeople.security.configurations;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,12 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@RequiredArgsConstructor
 @Configuration
 public class AuthenticationBeansInjector {
 
-    @Autowired
     @Qualifier("customUserDetailsService")
-    UserDetailsService customUserDetailsService;
+    private final UserDetailsService customUserDetailsService;
 
     @Bean("customAuthenticationManager")
     public AuthenticationManager customAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -36,15 +36,4 @@ public class AuthenticationBeansInjector {
     public PasswordEncoder customPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    /*
-    @Bean
-    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        UserDetails userDetails = User.withUsername("joseluis")
-                .password(passwordEncoder().encode("secret"))
-                .roles("USER", "ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(userDetails);
-    }
-    */
 }

@@ -19,8 +19,8 @@ public class MessageConfig {
         return source;
     }
 
-    @Bean
-    public MessageSource messageSource() {
+    @Bean("customMessageSource")
+    public MessageSource customMessageSource() {
         ReloadableResourceBundleMessageSource messageSource
                 = new ReloadableResourceBundleMessageSource();
 
@@ -34,7 +34,7 @@ public class MessageConfig {
     public LocalValidatorFactoryBean getValidator() {
         // Unfortunately doesn't work
         LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-        bean.setValidationMessageSource(messageSource());
+        bean.setValidationMessageSource(customMessageSource());
         return bean;
     }
 

@@ -1,10 +1,10 @@
 package org.bz.app.mspeople.security.configurations;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bz.app.mspeople.security.configurations.filter.TokenAuthenticationFilter;
 import org.bz.app.mspeople.security.entities.RoleSecurity;
 import org.bz.app.mspeople.security.entities.UserSecurity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,20 +22,18 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
+@RequiredArgsConstructor
 @Configuration
 @EnableMethodSecurity
 public class HttpSecurityConfiguration {
 
-    @Autowired
     @Qualifier("customAuthenticationProvider")
-    AuthenticationProvider customAuthenticationProvider;
+    private final AuthenticationProvider customAuthenticationProvider;
 
-    @Autowired
     @Qualifier("customPasswordEncoder")
-    private PasswordEncoder customPasswordEncoder;
+    private final PasswordEncoder customPasswordEncoder;
 
-    @Autowired
-    TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
 
     @Bean
