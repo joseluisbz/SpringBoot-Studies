@@ -33,7 +33,7 @@ public class RoleSecurity implements Serializable {
     private Set<UserSecurity> users;
 
     @JsonManagedReference
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "ROLE_AUTHORITY_MAPPING", joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<AuthoritySecurity> authoritySecurities;

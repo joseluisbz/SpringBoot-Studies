@@ -30,7 +30,7 @@ public class UserSecurity extends UserAncestry implements UserDetails {
 
     private boolean enabled = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false, referencedColumnName = "id")
     private RoleSecurity role;
 
