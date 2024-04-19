@@ -38,22 +38,33 @@ public class HttpSecurityConfiguration {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        RoleSecurity roleSecurity = RoleSecurity
+        RoleSecurity adminRoleSecurity = RoleSecurity
                 .builder()
                 .name("ADMIN")
                 .build();
-        UserSecurity userSecurity = UserSecurity
+        UserSecurity adminUserSecurity = UserSecurity
                 .builder()
                 .password(customPasswordEncoder.encode("userPassword"))
-                .username("joseluisbz")
-                .role(roleSecurity)
+                .username("admin")
+                .role(adminRoleSecurity)
                 .build();
-        return new InMemoryUserDetailsManager(userSecurity);
+
+        RoleSecurity userRoleSecurity = RoleSecurity
+                .builder()
+                .name("USER")
+                .build();
+        UserSecurity userUserSecurity = UserSecurity
+                .builder()
+                .password(customPasswordEncoder.encode("userPassword"))
+                .username("user")
+                .role(userRoleSecurity)
+                .build();
+        return new InMemoryUserDetailsManager(adminUserSecurity, userUserSecurity);
     }
 
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean("customSecurityFilterChain")
+    SecurityFilterChain customSecurityFilterChain(HttpSecurity http) throws Exception {
         SecurityFilterChain defaultSecurityFilterChain = http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagementCustomizer ->
@@ -66,6 +77,7 @@ public class HttpSecurityConfiguration {
         log.info("defaultSecurityFilterChain: " + defaultSecurityFilterChain);
         return defaultSecurityFilterChain;
     }
+
 
     private static Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>
     getAuthorizationManagerRequestByCoincidence() {
@@ -114,6 +126,7 @@ public class HttpSecurityConfiguration {
         };
     }
 
+
     private static Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>
     getAuthorizationManagerRequestByMethod() {
         return authorizeHttpRequestsCustomizer -> {
@@ -121,6 +134,14 @@ public class HttpSecurityConfiguration {
             authorizeHttpRequestsCustomizer
                     .requestMatchers(HttpMethod.POST, "/api/users")
                     .permitAll();
+
+            authorizeHttpRequestsCustomizer
+                    .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
+                    .hasAnyRole("ADMIN");
+
+            authorizeHttpRequestsCustomizer
+                    .requestMatchers(HttpMethod.PUT, "/api/users/{id}")
+                    .hasAnyAuthority("EDIT_ALL", "EDIT_SELF");
 
             authorizeHttpRequestsCustomizer
                     .requestMatchers(HttpMethod.POST, "/api/authenticate")

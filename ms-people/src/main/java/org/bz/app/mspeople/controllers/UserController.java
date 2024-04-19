@@ -75,7 +75,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PreAuthorize("hasAnyAuthority('EDIT_ALL', 'EDIT_SELF')")
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@RequestHeader(value = "Authorization") String token,
                                   @Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult result, @PathVariable("id") UUID id) {
