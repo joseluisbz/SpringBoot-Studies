@@ -9,7 +9,7 @@ import org.bz.app.mspeople.security.exceptions.NonexistentRoleBadRequestExceptio
 import org.bz.app.mspeople.security.exceptions.RoleEmptyBadRequestException;
 import org.bz.app.mspeople.security.exceptions.UsernameEmptyBadRequestException;
 import org.bz.app.mspeople.services.UserService;
-import org.bz.app.mspeople.security.components.validations.UserPasswordValidator;
+import org.bz.app.mspeople.components.validations.UserPasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
