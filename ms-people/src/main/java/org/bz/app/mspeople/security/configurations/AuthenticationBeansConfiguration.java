@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RequiredArgsConstructor
 @Configuration
-public class AuthenticationBeansInjector {
+public class AuthenticationBeansConfiguration {
 
     @Qualifier("customUserDetailsService")
     private final UserDetailsService customUserDetailsService;
