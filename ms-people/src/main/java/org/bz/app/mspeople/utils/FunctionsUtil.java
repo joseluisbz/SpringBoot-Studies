@@ -1,4 +1,4 @@
-package org.bz.app.mspeople.util;
+package org.bz.app.mspeople.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bz.app.mspeople.exceptions.DefaultInternalServerErrorException;

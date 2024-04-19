@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
-import static org.bz.app.mspeople.util.FunctionsUtil.getStackTraceElementByExceptionFunction;
+import static org.bz.app.mspeople.utils.FunctionsUtil.getStackTraceElementByExceptionFunction;
 
 
 @ControllerAdvice

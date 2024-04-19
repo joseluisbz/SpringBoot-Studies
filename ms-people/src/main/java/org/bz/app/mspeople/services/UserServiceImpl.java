@@ -19,7 +19,7 @@ import org.bz.app.mspeople.security.repositories.AuthoritySecurityRepository;
 import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.bz.app.mspeople.security.services.TokenService;
-import org.bz.app.mspeople.util.JsonMapperUtil;
+import org.bz.app.mspeople.utils.JsonMapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-import static org.bz.app.mspeople.util.FunctionsUtil.stackFrameFunction;
+import static org.bz.app.mspeople.utils.FunctionsUtil.stackFrameFunction;
 
 @Slf4j
 @RequiredArgsConstructor

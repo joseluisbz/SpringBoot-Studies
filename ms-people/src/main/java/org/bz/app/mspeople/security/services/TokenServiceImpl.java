@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
-import static org.bz.app.mspeople.util.FunctionsUtil.stackFrameFunction;
+import static org.bz.app.mspeople.utils.FunctionsUtil.stackFrameFunction;
 
 @Slf4j
 @RequiredArgsConstructor
