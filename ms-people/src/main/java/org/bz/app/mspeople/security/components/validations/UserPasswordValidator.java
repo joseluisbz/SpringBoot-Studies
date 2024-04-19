@@ -1,4 +1,4 @@
-package org.bz.app.mspeople.validations;
+package org.bz.app.mspeople.security.components.validations;
 
 import lombok.RequiredArgsConstructor;
 import org.bz.app.mspeople.dtos.UserRequestDTO;

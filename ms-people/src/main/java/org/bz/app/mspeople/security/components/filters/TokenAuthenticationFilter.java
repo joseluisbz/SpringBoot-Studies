@@ -1,4 +1,4 @@
-package org.bz.app.mspeople.security.configurations.filter;
+package org.bz.app.mspeople.security.components.filters;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

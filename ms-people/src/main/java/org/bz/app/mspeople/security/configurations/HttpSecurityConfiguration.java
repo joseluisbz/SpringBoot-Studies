@@ -2,7 +2,7 @@ package org.bz.app.mspeople.security.configurations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bz.app.mspeople.security.configurations.filter.TokenAuthenticationFilter;
+import org.bz.app.mspeople.security.components.filters.TokenAuthenticationFilter;
 import org.bz.app.mspeople.security.entities.RoleSecurity;
 import org.bz.app.mspeople.security.entities.UserSecurity;
 import org.springframework.beans.factory.annotation.Qualifier;

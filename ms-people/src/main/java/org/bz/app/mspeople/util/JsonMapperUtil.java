@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotNull;
 
-public class JsonMapper {
+public class JsonMapperUtil {
 
-    private JsonMapper() {
+    private JsonMapperUtil() {
     }
 
     public static ObjectMapper getMapper() {
@@ -15,7 +15,7 @@ public class JsonMapper {
 
     public static String writeValueAsString(@NotNull Object object) {
         try {
-            return JsonMapper.getMapper().writeValueAsString(object);
+            return JsonMapperUtil.getMapper().writeValueAsString(object);
         } catch (JsonProcessingException x) {
             throw new IllegalArgumentException(x.getMessage(), x);
         }

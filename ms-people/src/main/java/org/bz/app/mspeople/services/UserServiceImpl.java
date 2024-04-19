@@ -19,7 +19,7 @@ import org.bz.app.mspeople.security.repositories.AuthoritySecurityRepository;
 import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.bz.app.mspeople.security.services.TokenService;
-import org.bz.app.mspeople.util.JsonMapper;
+import org.bz.app.mspeople.util.JsonMapperUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
                         return optionalUserResponseDTO.orElseGet(UserResponseDTO::new);
                     }).toList();
 
-            log.info("listUserResponseDTO: " + JsonMapper.writeValueAsString(listUserResponseDTO));
+            log.info("listUserResponseDTO: " + JsonMapperUtil.writeValueAsString(listUserResponseDTO));
             return listUserResponseDTO;
         } catch (Exception exception) {
             log.error("exception: ", exception);
@@ -144,12 +144,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDTO save(UserRequestDTO userRequestDTO) {
         try {
-            log.info("userRequestDTO: " + JsonMapper.writeValueAsString(userRequestDTO));
+            log.info("userRequestDTO: " + JsonMapperUtil.writeValueAsString(userRequestDTO));
 
             Map<String, Object> extraClaims = tokenService.generateExtraClaims(userRequestDTO);
             String token = tokenService.generateToken(userRequestDTO.getUsername(), null, extraClaims);
 
-            log.info("Claims: " + JsonMapper.writeValueAsString(tokenService.extractAllClaims(token)));
+            log.info("Claims: " + JsonMapperUtil.writeValueAsString(tokenService.extractAllClaims(token)));
             userRequestDTO.setToken(token);
 
             String encodedPassword = customPasswordEncoder.encode(userRequestDTO.getPassword());
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
             savedUserSecurity.getRole().setAuthoritySecurities(setSecurityAuthority);
 
             UserResponseDTO userResponseDTO = peopleMapper.userEntityAndSecurityToDTO(savedUserEntity, savedUserSecurity);
-            log.info("userResponseDTO: " + JsonMapper.writeValueAsString(userResponseDTO));
+            log.info("userResponseDTO: " + JsonMapperUtil.writeValueAsString(userResponseDTO));
             return userResponseDTO;
         } catch (Exception exception) {
             log.error("exception: ", exception);
