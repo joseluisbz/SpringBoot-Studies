@@ -9,7 +9,7 @@ import org.bz.app.mspeople.dtos.UserResponseDTO;
 import org.bz.app.mspeople.entities.PhoneEntity;
 import org.bz.app.mspeople.entities.UserEntity;
 import org.bz.app.mspeople.exceptions.DefaultInternalServerErrorException;
-import org.bz.app.mspeople.mapper.PeopleMapper;
+import org.bz.app.mspeople.mappers.PeopleMapper;
 import org.bz.app.mspeople.repositories.PhoneRepository;
 import org.bz.app.mspeople.repositories.UserRepository;
 import org.bz.app.mspeople.security.entities.AuthoritySecurity;

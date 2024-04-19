@@ -1,4 +1,4 @@
-package org.bz.app.mspeople.mapper;
+package org.bz.app.mspeople.mappers;
 
 import org.bz.app.mspeople.dtos.*;
 import org.bz.app.mspeople.entities.PhoneEntity;

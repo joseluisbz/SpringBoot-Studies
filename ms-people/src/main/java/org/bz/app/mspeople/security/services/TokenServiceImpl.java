@@ -11,7 +11,7 @@ import org.bz.app.mspeople.dtos.RoleDTO;
 import org.bz.app.mspeople.dtos.UserRequestDTO;
 import org.bz.app.mspeople.entities.UserEntity;
 import org.bz.app.mspeople.exceptions.DefaultInternalServerErrorException;
-import org.bz.app.mspeople.mapper.PeopleMapper;
+import org.bz.app.mspeople.mappers.PeopleMapper;
 import org.bz.app.mspeople.repositories.UserRepository;
 import org.bz.app.mspeople.security.dtos.AuthenticationRequestDTO;
 import org.bz.app.mspeople.security.dtos.AuthenticationResponseDTO;
