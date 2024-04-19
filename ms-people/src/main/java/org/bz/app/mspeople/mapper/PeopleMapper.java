@@ -15,12 +15,14 @@ import java.util.stream.StreamSupport;
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface PeopleMapper {
 
-
     @Mapping(source = "phones", target = "phoneEntities", qualifiedByName = "phoneDTOToEntity")
     UserEntity userDTOToEntity(UserRequestDTO userRequestDTO);
 
+    @Mapping(target = "authorities", ignore = true)
     UserSecurity userDTOToSecurity(UserRequestDTO userRequestDTO);
 
+    @Mapping(target = "users", ignore = true)
+    @Mapping(source = "authorities", target = "authoritySecurities", qualifiedByName = "authorityDTOToSecurity")
     RoleSecurity roleDTOToSecurity(RoleDTO roleDTO);
 
     @AfterMapping
@@ -33,8 +35,22 @@ public interface PeopleMapper {
     PhoneEntity phoneDTOToEntity(PhoneRequestDTO phoneRequestDTO);
 
     @Mapping(source = "phoneEntities", target = "phones", qualifiedByName = "phoneEntityToDTO")
+
+    @Mapping(target = "accountNonExpired", ignore = true)
+    @Mapping(target = "accountNonLocked", ignore = true)
+    @Mapping(target = "credentialsNonExpired", ignore = true)
+    @Mapping(target = "enabled", ignore = true)
+    @Mapping(target = "role", ignore = true)
     UserResponseDTO userEntityToDTO(UserEntity userEntity);
 
+
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "phones", ignore = true)
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "modified", ignore = true)
+    @Mapping(target = "lastLogin", ignore = true)
+    @Mapping(target = "isactive", ignore = true)
+    @Mapping(target = "token", ignore = true)
     UserResponseDTO userSecurityToDTO(UserSecurity userSecurity);
 
     @Mapping(source = "userSecurity.id", target = "id")
@@ -57,10 +73,15 @@ public interface PeopleMapper {
     @Mapping(source = "userSecurity.role.authoritySecurities", target = "role.authorities", qualifiedByName = "authoritySecurityToDTO")
     UserResponseDTO userEntityAndSecurityToDTO(UserEntity userEntity, UserSecurity userSecurity);
 
+    @Mapping(source = "authoritySecurities", target = "authorities")
     RoleDTO roleSecurityToDTO(RoleSecurity roleSecurity);
 
     @Named("authoritySecurityToDTO")
     AuthorityDTO authoritySecurityToDTO(AuthoritySecurity authoritySecurity);
+
+    @Named("authorityDTOToSecurity")
+    @Mapping(target = "roleSecurities", ignore = true)
+    AuthoritySecurity authorityDTOToSecurity(AuthorityDTO authorityDTO);
 
     @AfterMapping
     default void afterMappingUserEntityToDTO(@MappingTarget UserResponseDTO userResponseDTO) {
