@@ -27,7 +27,7 @@ public class MsPeopleApplication {
     public static void displayAllBeans() {
         String[] allBeanNames = applicationContext.getBeanDefinitionNames();
         for (String beanName : allBeanNames) {
-            log.info("beanName: " + beanName);
+            log.trace("beanName: " + beanName);
         }
     }
 
