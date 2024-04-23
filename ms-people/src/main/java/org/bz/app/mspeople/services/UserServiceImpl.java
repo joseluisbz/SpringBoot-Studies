@@ -20,7 +20,6 @@ import org.bz.app.mspeople.security.repositories.RoleSecurityRepository;
 import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.bz.app.mspeople.security.services.TokenService;
 import org.bz.app.mspeople.utils.JsonMapperUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,9 +49,8 @@ public class UserServiceImpl implements UserService {
 
     private final TokenService tokenService;
 
-    @Autowired
     @Qualifier("customPasswordEncoder")
-    private PasswordEncoder customPasswordEncoder;
+    private final PasswordEncoder customPasswordEncoder;
 
     @Override
     @Transactional(readOnly = true)
