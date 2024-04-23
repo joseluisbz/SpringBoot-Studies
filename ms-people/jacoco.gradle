@@ -1,0 +1,93 @@
+def jacocoExcludedClasses = [
+        //Main Class
+        '**/*Application.class',
+
+        // Configuration Classes
+        '**/*Configuration.class',
+        '**/configurations/*.class',
+
+        // DTO Classes
+        '**/*DTO.class',
+        '**/dtos/*.class',
+
+        // Entity Classes
+        '**/*Entity.class',
+        '**/entities/*.class',
+
+        // Mapper Classes
+        '**/*Mapper.class',
+        '**/*MapperImpl.class',
+        '**/mappers/*.class',
+
+        // Repository Classes
+        '**/*Repository.class',
+        '**/repositories/*.class',
+
+        // Util Classes
+        '**/*Util.class',
+        '**/utils/*.class'
+]
+
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+}
+jacoco {
+    toolVersion = "0.8.11"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+jacocoTestReport {
+    executionData.setFrom(
+            fileTree(dir: layout.buildDirectory.dir('jacoco'),
+                   include: '**/*.exec'
+            )
+    )
+
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it,
+                            exclude: jacocoExcludedClasses
+                    )
+                })
+        )
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it,
+                            exclude: jacocoExcludedClasses
+                    )
+                })
+        )
+    }
+    violationRules {
+        rule {
+            enabled = true
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.85
+            }
+        }
+        rule {
+            enabled = true
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.8
+            }
+        }
+    }
+}
