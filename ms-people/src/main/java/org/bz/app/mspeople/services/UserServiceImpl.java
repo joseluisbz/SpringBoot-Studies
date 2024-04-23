@@ -283,31 +283,18 @@ public class UserServiceImpl implements UserService {
     }
 
     private Optional<UserResponseDTO> optionalUserEntityToDTO(Optional<UserEntity> optionalUserEntity) {
-        try {
-            if (optionalUserEntity.isPresent()) {
-                UserEntity userEntity = optionalUserEntity.get();
-                return Optional.of(peopleMapper.userEntityToDTO(userEntity));
-            }
-            return Optional.empty();
-        } catch (Exception exception) {
-            log.error("exception: ", exception);
-            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
-            throw new DefaultInternalServerErrorException(exception, stackFrame);
+        if (optionalUserEntity.isPresent()) {
+            UserEntity userEntity = optionalUserEntity.get();
+            return Optional.of(peopleMapper.userEntityToDTO(userEntity));
         }
+        return Optional.empty();
     }
 
-
     private Optional<PhoneResponseDTO> optionalPhoneEntityToDTO(Optional<PhoneEntity> optionalPhoneEntity) {
-        try {
-            if (optionalPhoneEntity.isPresent()) {
-                PhoneEntity phoneEntity = optionalPhoneEntity.get();
-                return Optional.of(peopleMapper.phoneEntityToDTO(phoneEntity));
-            }
-            return Optional.empty();
-        } catch (Exception exception) {
-            log.error("exception: ", exception);
-            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
-            throw new DefaultInternalServerErrorException(exception, stackFrame);
+        if (optionalPhoneEntity.isPresent()) {
+            PhoneEntity phoneEntity = optionalPhoneEntity.get();
+            return Optional.of(peopleMapper.phoneEntityToDTO(phoneEntity));
         }
+        return Optional.empty();
     }
 }
