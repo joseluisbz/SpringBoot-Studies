@@ -1,16 +1,14 @@
 package org.bz.app.mspeople.dtos;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
+@ToString
 @AllArgsConstructor
 public class UserRequestDTO implements Serializable {
 

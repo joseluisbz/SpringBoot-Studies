@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleDTO implements Serializable {
