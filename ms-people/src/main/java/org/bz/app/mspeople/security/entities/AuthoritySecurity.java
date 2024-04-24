@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Builder
-@ToString
+@ToString(exclude = {"roleSecurities"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
