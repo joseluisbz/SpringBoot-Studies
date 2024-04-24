@@ -154,21 +154,15 @@ public class TokenServiceImpl implements TokenService {
     }
 
     private Set<AuthoritySecurity> getAuthoritiesByRole(RoleDTO role) {
-        try {
-            Set<AuthoritySecurity> authorities = new HashSet<>();
-            Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(role.getName());
-            if (optionalRoleSecurity.isPresent()) {
-                Set<AuthoritySecurity> setSecurityAuthority = authoritySecurityRepository.findByRoleSecurities_Id(optionalRoleSecurity.get().getId());
-                log.trace("setSecurityAuthority: " + setSecurityAuthority);
-                authorities = setSecurityAuthority;
-            }
-
-            return authorities;
-        } catch (Exception exception) {
-            log.error("exception: ", exception);
-            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
-            throw new DefaultInternalServerErrorException(exception, stackFrame);
+        Set<AuthoritySecurity> authorities = new HashSet<>();
+        Optional<RoleSecurity> optionalRoleSecurity = roleSecurityRepository.findByNameIgnoreCase(role.getName());
+        if (optionalRoleSecurity.isPresent()) {
+            Set<AuthoritySecurity> setSecurityAuthority = authoritySecurityRepository.findByRoleSecurities_Id(optionalRoleSecurity.get().getId());
+            log.trace("setSecurityAuthority: " + setSecurityAuthority);
+            authorities = setSecurityAuthority;
         }
+
+        return authorities;
     }
 
 }
