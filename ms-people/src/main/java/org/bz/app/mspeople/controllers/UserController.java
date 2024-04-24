@@ -3,13 +3,13 @@ package org.bz.app.mspeople.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bz.app.mspeople.components.validations.UserPasswordValidator;
 import org.bz.app.mspeople.dtos.*;
 import org.bz.app.mspeople.exceptions.*;
 import org.bz.app.mspeople.security.exceptions.NonexistentRoleBadRequestException;
 import org.bz.app.mspeople.security.exceptions.RoleEmptyBadRequestException;
 import org.bz.app.mspeople.security.exceptions.UsernameEmptyBadRequestException;
 import org.bz.app.mspeople.services.UserService;
-import org.bz.app.mspeople.components.validations.UserPasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -108,12 +108,8 @@ public class UserController {
         userRequestDTO.setCreated(editedUser.getCreated());
         userRequestDTO.setToken(token);
 
-        try {
-            UserResponseDTO updatedUser = userService.save(userRequestDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
-        } catch (Exception exp) {
-            throw new DefaultBadRequestException(exp.getLocalizedMessage());
-        }
+        UserResponseDTO updatedUser = userService.save(userRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
     }
 
     @DeleteMapping("/{id}")
