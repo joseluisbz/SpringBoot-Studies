@@ -135,8 +135,7 @@ public class TokenServiceImpl implements TokenService {
             throw badCredentialsException;
         } catch (Exception exception) {
             log.error("exception: ", exception);
-            StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
-            throw new DefaultInternalServerErrorException(exception, stackFrame);
+            throw new DefaultInternalServerErrorException(exception, this.getClass());
         }
     }
 

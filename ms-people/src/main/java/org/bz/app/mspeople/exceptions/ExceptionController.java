@@ -25,7 +25,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(DefaultInternalServerErrorException.class)
-    public ResponseEntity<CustomExceptionResponse> defaultInternalServerError(DefaultInternalServerErrorException defaultInternalServerErrorException) {
+    public ResponseEntity<CustomExceptionResponse> defaultInternalServerErrorException(DefaultInternalServerErrorException defaultInternalServerErrorException) {
         CustomExceptionResponse customExceptionResponse = new CustomExceptionResponse();
         customExceptionResponse.setMessage(defaultInternalServerErrorException.getLocalizedMessage());
         customExceptionResponse.setDateTime(LocalDateTime.now());
