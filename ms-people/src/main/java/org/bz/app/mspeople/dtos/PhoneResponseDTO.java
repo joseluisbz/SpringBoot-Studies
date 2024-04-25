@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Builder
-@ToString
+@ToString(exclude = {"user"})
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
