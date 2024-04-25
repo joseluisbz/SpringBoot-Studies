@@ -1,5 +1,8 @@
-package org.bz.app.mspeople.exceptions;
+package org.bz.app.mspeople.controllers;
 
+import org.bz.app.mspeople.exceptions.CustomExceptionResponse;
+import org.bz.app.mspeople.exceptions.DefaultBadRequestException;
+import org.bz.app.mspeople.exceptions.DefaultInternalServerErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,7 +16,7 @@ import static org.bz.app.mspeople.utils.FunctionsUtil.getStackTraceElementByExce
 
 
 @ControllerAdvice
-public class ExceptionController {
+public class ExceptionsController {
 
     @ExceptionHandler(DefaultBadRequestException.class)
     public ResponseEntity<CustomExceptionResponse> defaultBadRequest(DefaultBadRequestException defaultBadRequestException) {
