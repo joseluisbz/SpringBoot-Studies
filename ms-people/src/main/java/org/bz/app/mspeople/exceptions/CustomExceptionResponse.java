@@ -1,16 +1,19 @@
 package org.bz.app.mspeople.exceptions;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-
+@ToString(exclude = {"exception"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomExceptionResponse {
 
     private String message;
 
+    @JsonFormat(pattern = "yyyy/MM/dd-HH:mm:ss")
     private LocalDateTime dateTime;
 
     private String catcherClass;
@@ -18,6 +21,8 @@ public class CustomExceptionResponse {
     private String throwerMethod;
 
     private Integer lineNumber;
+
+    private Exception exception;
 
     public String getMessage() {
         return message;
@@ -57,5 +62,13 @@ public class CustomExceptionResponse {
 
     public void setLineNumber(Integer lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }

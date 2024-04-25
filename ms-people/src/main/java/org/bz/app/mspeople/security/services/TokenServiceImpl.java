@@ -24,6 +24,7 @@ import org.bz.app.mspeople.security.repositories.UserSecurityRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -130,6 +131,8 @@ public class TokenServiceImpl implements TokenService {
             // Actualizar el Token, y modificar la fecha de loggueo.
 
             return AuthenticationResponseDTO.builder().token(token).build();
+        } catch (BadCredentialsException badCredentialsException) {
+            throw badCredentialsException;
         } catch (Exception exception) {
             log.error("exception: ", exception);
             StackWalker.StackFrame stackFrame = StackWalker.getInstance().walk(stackFrameFunction);
