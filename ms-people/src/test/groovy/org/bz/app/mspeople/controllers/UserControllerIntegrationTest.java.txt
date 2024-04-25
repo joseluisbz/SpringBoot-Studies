@@ -1,0 +1,354 @@
+package org.bz.app.mspeople.controllers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bz.app.mspeople.dtos.PhoneRequestDTO;
+import org.bz.app.mspeople.dtos.RoleDTO;
+import org.bz.app.mspeople.dtos.UserRequestDTO;
+import org.bz.app.mspeople.dtos.UserResponseDTO;
+import org.bz.app.mspeople.security.dtos.AuthenticationRequestDTO;
+import org.bz.app.mspeople.security.dtos.AuthenticationResponseDTO;
+import org.bz.app.mspeople.security.services.TokenService;
+import org.bz.app.mspeople.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.spockframework.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@DisplayName("Integration tests for UserController endpoints")
+@Tag("integration")
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class UserControllerIntegrationTest {
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+    }
+
+    @WithMockUser(authorities = {"READ_ALL"})
+    @Test
+    void list_using_Authority() throws Exception {
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users");
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(username = "user")
+    @Test
+    void list_using_Username_with_wrong_ROLE() throws Exception {
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users");
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void list_Forbidden() throws Exception {
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users");
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void view_using_ROLE() throws Exception {
+        UserResponseDTO userResponseDTO = insert_ADMIN_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users/" + id);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(username = "user")
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void view_using_Username() throws Exception {
+        UserResponseDTO userResponseDTO = insert_USER_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users/" + id);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @Test
+    void view_NotFound() throws Exception {
+        UUID id = UUID.randomUUID();
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .get("/api/users/" + id);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void create() throws Exception {
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createAdmin_RoleDTO());
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userRequestDTO));
+
+        MvcResult mvcResult = mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.role.authorities[0].authority", containsString("_")))
+                .andReturn();
+
+        MockHttpServletResponse mockHttpServletResponse = mvcResult.getResponse();
+        String jsonResponse = mockHttpServletResponse.getContentAsString();
+        UserResponseDTO userResponseDTO = objectMapper.readValue(jsonResponse, UserResponseDTO.class);
+        Assert.notNull(userResponseDTO);
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void edit_with_Authorization_and_Authority() throws Exception {
+        UserResponseDTO userResponseDTO = insert_ADMIN_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+        Set<PhoneRequestDTO> phones = userResponseDTO.getPhones().stream().map(p -> {
+            return PhoneRequestDTO
+                    .builder()
+                    .id(p.getId())
+                    .number(p.getNumber())
+                    .cityCode(p.getCityCode())
+                    .countryCode(p.getCountryCode())
+                    .build();
+        }).collect(Collectors.toSet());
+
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createAdmin_RoleDTO());
+        userRequestDTO.setId(id);
+        userRequestDTO.setPhones(phones);
+
+        AuthenticationResponseDTO authenticationResponseDTO = getAuthenticationResponseDTO(userRequestDTO);
+        String authorization = "Bearer ".concat(authenticationResponseDTO.getToken());
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .put("/api/users/" + id)
+                //.with(jwt().authorities(new SimpleGrantedAuthority("DELETE_ALL")))
+                .header(HttpHeaders.AUTHORIZATION, authorization)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userRequestDTO));
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void edit_without_Authorization() throws Exception {
+        UserResponseDTO userResponseDTO = insert_ADMIN_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+        Set<PhoneRequestDTO> phones = userResponseDTO.getPhones().stream().map(p -> {
+            return PhoneRequestDTO
+                    .builder()
+                    .id(p.getId())
+                    .number(p.getNumber())
+                    .cityCode(p.getCityCode())
+                    .countryCode(p.getCountryCode())
+                    .build();
+        }).collect(Collectors.toSet());
+
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createAdmin_RoleDTO());
+        userRequestDTO.setId(id);
+        userRequestDTO.setPhones(phones);
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .put("/api/users/" + id)
+                //.with(jwt().authorities(new SimpleGrantedAuthority("DELETE_ALL")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userRequestDTO));
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void delete_with_Authorization_and_ROLE() throws Exception {
+        UserResponseDTO userResponseDTO = insert_ADMIN_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createAdmin_RoleDTO());
+
+        AuthenticationResponseDTO authenticationResponseDTO = getAuthenticationResponseDTO(userRequestDTO);
+        String authorization = "Bearer ".concat(authenticationResponseDTO.getToken());
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .delete("/api/users/" + id)
+                //.with(jwt().authorities(new SimpleGrantedAuthority("DELETE_ALL")))
+                .header(HttpHeaders.AUTHORIZATION, authorization);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void delete_with_Authorization_and_Wrong_ROLE() throws Exception {
+        UserResponseDTO userResponseDTO = insert_USER_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createUser_RoleDTO());
+
+        AuthenticationResponseDTO authenticationResponseDTO = getAuthenticationResponseDTO(userRequestDTO);
+        String authorization = "Bearer ".concat(authenticationResponseDTO.getToken());
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .delete("/api/users/" + id)
+                //.with(jwt().authorities(new SimpleGrantedAuthority("DELETE_ALL")))
+                .header(HttpHeaders.AUTHORIZATION, authorization);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void delete_without_Authorization() throws Exception {
+        UserResponseDTO userResponseDTO = insert_USER_UserResponseDTO();
+        UUID id = userResponseDTO.getId();
+
+        MockHttpServletRequestBuilder param = (MockHttpServletRequestBuilder) MockMvcRequestBuilders
+                .delete("/api/users/" + id);
+
+        mockMvc.perform(param)
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
+
+    private PhoneRequestDTO createPhoneRequestDTO() {
+        return PhoneRequestDTO
+                .builder()
+                .number(2003L)
+                .cityCode(20)
+                .countryCode(20000)
+                .build();
+    }
+
+    private RoleDTO createAdmin_RoleDTO() {
+        return RoleDTO
+                .builder()
+                .name("ADMIN")
+                .build();
+    }
+
+    private RoleDTO createUser_RoleDTO() {
+        return RoleDTO
+                .builder()
+                .name("USER")
+                .build();
+    }
+
+    private UserRequestDTO createUserRequestDTO() {
+        UserRequestDTO userRequestDTO = UserRequestDTO
+                .builder()
+                .password("rr5y5yrty3")
+                .email("joseluisBZ@gmail.com")
+                .username("joseluisBZ")
+                .name("Jose Luis Bernal Zambrano")
+                .token("token1")
+                .accountNonExpired(true)
+                .accountNonLocked(true)
+                .credentialsNonExpired(true)
+                .enabled(true)
+                .build();
+        userRequestDTO.setPhones(Set.of(createPhoneRequestDTO()));
+        return userRequestDTO;
+    }
+
+    private UserResponseDTO insert_ADMIN_UserResponseDTO() {
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createAdmin_RoleDTO());
+        return userService.save(userRequestDTO);
+    }
+
+    private UserResponseDTO insert_USER_UserResponseDTO() {
+        UserRequestDTO userRequestDTO = createUserRequestDTO();
+        userRequestDTO.setRole(createUser_RoleDTO());
+        return userService.save(userRequestDTO);
+    }
+
+    private AuthenticationResponseDTO getAuthenticationResponseDTO(UserRequestDTO userRequestDTO) {
+        AuthenticationRequestDTO authenticationRequestDTO = AuthenticationRequestDTO
+                .builder()
+                .username(userRequestDTO.getUsername())
+                .password(userRequestDTO.getPassword())
+                .build();
+        return tokenService.login(authenticationRequestDTO);
+    }
+}

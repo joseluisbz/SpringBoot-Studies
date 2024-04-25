@@ -1,0 +1,25 @@
+
+//https://stackoverflow.com/a/75773500/811293
+//https://medium.com/@AlexanderObregon/mastering-spring-boot-testing-with-junit-and-mockito-8bec9b4911fc
+//https://reflectoring.io/spring-boot-web-controller-test/
+
+//https://www.diffblue.com/blog/java/software%20development/how-to-test-a-secured-spring-web-mvc-endpoint-with-mockmvc/
+
+
+//https://www.youtube.com/watch?v=sCYoQIBND6w&list=PLqq9AhcMm2oPdXXFT3fzjaKLsVymvMXaY&index=38
+https://youtu.be/o9FlC_auq64?si=y8K3DUkO7Y1D6quw
+
+Unit Testing of Controllers when are Secured
+//https://www.baeldung.com/spring-spock-testing
+//https://www.youtube.com/watch?v=o9FlC_auq64&t=1380s
+//https://www.youtube.com/watch?v=oLtXe1wgSC8
+
+//https://stackoverflow.com/questions/24133006/spring-boot-testing-cannot-autowire-springsecurityfilterchain-on-test-class
+
+
+//https://dev.to/stack-labs/how-to-test-configuration-class-in-spring-boot-16ai
+//https://stackoverflow.com/questions/34909345/how-to-test-spring-configuration-classes
+//https://www.baeldung.com/spring-boot-testing-configurationproperties
+
+Data Base for Testing
+//https://medium.com/@paulkunda/setting-up-h2-for-testing-in-spring-boot-245d3a98e405
