@@ -61,6 +61,7 @@ class AuthenticationControllerSpec extends Specification {
         def responseEntity = authenticationController.login(authenticationRequestDTO)
 
         then:
+        println "responseEntity: " + responseEntity
         thrown DefaultInternalServerErrorException
     }
 }

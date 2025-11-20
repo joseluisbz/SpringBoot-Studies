@@ -65,9 +65,10 @@ class TokenServiceSpec extends Specification {
         getFieldByName("ENCODED_SECRET_KEY").set(tokenService, encodedSecretKey)
 
         when:
-        tokenService.generateToken(userRequestDTO.getUsername(), null, extraClaims)
+        def token = tokenService.generateToken(userRequestDTO.getUsername(), null, extraClaims)
 
         then:
+        println "token: " + token
         noExceptionThrown()
     }
 
@@ -188,7 +189,7 @@ class TokenServiceSpec extends Specification {
         return field;
     }
 
-    private static Method getMethodByname(String name) {
+    private static Method getMethodByName(String name) {
         // This is not needed
         Method[] allMethods = TokenServiceImpl.class.getDeclaredMethods()
         for (Method method : allMethods) {
